@@ -1,3 +1,4 @@
 # Deployment
-1. `pip install --target ./package requests boto3 bs4 lxml`
+1. (follow instructions)[https://www.geeksforgeeks.org/how-to-install-python-packages-for-aws-lambda-layers/]
+1. `docker cp 1ac0a8674994:/layer/mypackage.zip C:\Users\mwham\Documents\repos\cta-tracker\dependency_layer`
 2. `python deploy.py`

@@ -13,11 +13,10 @@ s3 = boto3.client("s3")
 def get_bustracker(stop_id: int):
     ret = []
     resp = requests.get(f'http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop={stop_id}', timeout=15).text
-    print(stop_id)
     response_at = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     if '<noPredictionMessage>' in resp:
         return ret
-    page = bs4.BeautifulSoup(resp, 'lxml')
+    page = bs4.BeautifulSoup(resp, 'html.parser')
     for stop in page.find_all("stop"):
         stop_attrs = [x for x in stop.find("pre").children][1:]
         row = {
