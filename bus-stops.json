@@ -1,5 +1,5 @@
 {
-    "Bronzeville/Union Station": {
+    "1": {
         "stops": {
             "Northbound": [
                 {
@@ -137,9 +137,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "1"
+        "name": "Bronzeville/Union Station"
     },
-    "Hyde Park Express": {
+    "2": {
         "stops": {
             "Northbound": [
                 {
@@ -365,9 +365,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "2"
+        "name": "Hyde Park Express"
     },
-    "King Drive": {
+    "3": {
         "stops": {
             "Northbound": [
                 {
@@ -789,9 +789,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "3"
+        "name": "King Drive"
     },
-    "Cottage Grove": {
+    "4": {
         "stops": {
             "Northbound": [
                 {
@@ -1297,9 +1297,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "4"
+        "name": "Cottage Grove"
     },
-    "South Shore Night Bus": {
+    "5": {
         "stops": {
             "Eastbound": [
                 {
@@ -1729,9 +1729,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "5"
+        "name": "South Shore Night Bus"
     },
-    "Jackson Park Express": {
+    "6": {
         "stops": {
             "Northbound": [
                 {
@@ -1969,9 +1969,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "6"
+        "name": "Jackson Park Express"
     },
-    "Harrison": {
+    "7": {
         "stops": {
             "Eastbound": [
                 {
@@ -2217,9 +2217,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "7"
+        "name": "Harrison"
     },
-    "Halsted": {
+    "8": {
         "stops": {
             "Northbound": [
                 {
@@ -2637,9 +2637,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "8"
+        "name": "Halsted"
     },
-    "South Halsted": {
+    "8A": {
         "stops": {
             "Northbound": [
                 {
@@ -2877,9 +2877,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "8A"
+        "name": "South Halsted"
     },
-    "Ashland": {
+    "9": {
         "stops": {
             "Northbound": [
                 {
@@ -3377,9 +3377,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "9"
+        "name": "Ashland"
     },
-    "Ashland Express": {
+    "X9": {
         "stops": {
             "Northbound": [
                 {
@@ -3537,9 +3537,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "X9"
+        "name": "Ashland Express"
     },
-    "Lincoln": {
+    "11": {
         "stops": {
             "Northbound": [
                 {
@@ -3685,9 +3685,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "11"
+        "name": "Lincoln"
     },
-    "Roosevelt": {
+    "12": {
         "stops": {
             "Eastbound": [
                 {
@@ -3945,9 +3945,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "12"
+        "name": "Roosevelt"
     },
-    "Jeffery Jump": {
+    "J14": {
         "stops": {
             "Northbound": [
                 {
@@ -4089,9 +4089,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "J14"
+        "name": "Jeffery Jump"
     },
-    "Jeffery Local": {
+    "15": {
         "stops": {
             "Northbound": [
                 {
@@ -4449,9 +4449,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "15"
+        "name": "Jeffery Local"
     },
-    "16th/18th": {
+    "18": {
         "stops": {
             "Eastbound": [
                 {
@@ -4665,9 +4665,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "18"
+        "name": "16th/18th"
     },
-    "United Center Express": {
+    "19": {
         "stops": {
             "Westbound": [
                 {
@@ -4708,9 +4708,9 @@
                 }
             ]
         },
-        "route_id": "19"
+        "name": "United Center Express"
     },
-    "Madison": {
+    "20": {
         "stops": {
             "Eastbound": [
                 {
@@ -4980,9 +4980,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "20"
+        "name": "Madison"
     },
-    "Cermak": {
+    "21": {
         "stops": {
             "Eastbound": [
                 {
@@ -5284,9 +5284,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "21"
+        "name": "Cermak"
     },
-    "Clark": {
+    "22": {
         "stops": {
             "Northbound": [
                 {
@@ -5612,9 +5612,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "22"
+        "name": "Clark"
     },
-    "Wentworth": {
+    "24": {
         "stops": {
             "Northbound": [
                 {
@@ -5908,9 +5908,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "24"
+        "name": "Wentworth"
     },
-    "South Shore Express": {
+    "26": {
         "stops": {
             "Northbound": [
                 {
@@ -6232,9 +6232,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "26"
+        "name": "South Shore Express"
     },
-    "Stony Island": {
+    "28": {
         "stops": {
             "Northbound": [
                 {
@@ -6536,9 +6536,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "28"
+        "name": "Stony Island"
     },
-    "State": {
+    "29": {
         "stops": {
             "Northbound": [
                 {
@@ -6932,9 +6932,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "29"
+        "name": "State"
     },
-    "South Chicago": {
+    "30": {
         "stops": {
             "Northbound": [
                 {
@@ -7272,9 +7272,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "30"
+        "name": "South Chicago"
     },
-    "31st": {
+    "31": {
         "stops": {
             "Eastbound": [
                 {
@@ -7388,9 +7388,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "31"
+        "name": "31st"
     },
-    "South Michigan": {
+    "34": {
         "stops": {
             "Northbound": [
                 {
@@ -7624,9 +7624,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "34"
+        "name": "South Michigan"
     },
-    "31st/35th": {
+    "35": {
         "stops": {
             "Eastbound": [
                 {
@@ -7908,9 +7908,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "35"
+        "name": "31st/35th"
     },
-    "Broadway": {
+    "36": {
         "stops": {
             "Northbound": [
                 {
@@ -8216,9 +8216,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "36"
+        "name": "Broadway"
     },
-    "Sedgwick": {
+    "37": {
         "stops": {
             "Northbound": [
                 {
@@ -8348,9 +8348,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "37"
+        "name": "Sedgwick"
     },
-    "Pershing": {
+    "39": {
         "stops": {
             "Eastbound": [
                 {
@@ -8596,9 +8596,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "39"
+        "name": "Pershing"
     },
-    "43rd": {
+    "43": {
         "stops": {
             "Eastbound": [
                 {
@@ -8724,9 +8724,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "43"
+        "name": "43rd"
     },
-    "Wallace-Racine": {
+    "44": {
         "stops": {
             "Northbound": [
                 {
@@ -9032,9 +9032,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "44"
+        "name": "Wallace-Racine"
     },
-    "47th": {
+    "47": {
         "stops": {
             "Eastbound": [
                 {
@@ -9340,9 +9340,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "47"
+        "name": "47th"
     },
-    "South Damen": {
+    "48": {
         "stops": {
             "Northbound": [
                 {
@@ -9520,9 +9520,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "48"
+        "name": "South Damen"
     },
-    "Western": {
+    "49": {
         "stops": {
             "Northbound": [
                 {
@@ -9856,9 +9856,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "49"
+        "name": "Western"
     },
-    "North Western": {
+    "49B": {
         "stops": {
             "Northbound": [
                 {
@@ -9976,9 +9976,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "49B"
+        "name": "North Western"
     },
-    "Western Express": {
+    "X49": {
         "stops": {
             "Northbound": [
                 {
@@ -10128,9 +10128,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "X49"
+        "name": "Western Express"
     },
-    "Damen": {
+    "50": {
         "stops": {
             "Northbound": [
                 {
@@ -10472,9 +10472,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "50"
+        "name": "Damen"
     },
-    "51st": {
+    "51": {
         "stops": {
             "Eastbound": [
                 {
@@ -10616,9 +10616,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "51"
+        "name": "51st"
     },
-    "Kedzie": {
+    "52": {
         "stops": {
             "Northbound": [
                 {
@@ -10884,9 +10884,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "52"
+        "name": "Kedzie"
     },
-    "South Kedzie": {
+    "52A": {
         "stops": {
             "Northbound": [
                 {
@@ -11168,9 +11168,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "52A"
+        "name": "South Kedzie"
     },
-    "Pulaski": {
+    "53": {
         "stops": {
             "Northbound": [
                 {
@@ -11528,9 +11528,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "53"
+        "name": "Pulaski"
     },
-    "South Pulaski": {
+    "53A": {
         "stops": {
             "Northbound": [
                 {
@@ -11852,9 +11852,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "53A"
+        "name": "South Pulaski"
     },
-    "Cicero": {
+    "54": {
         "stops": {
             "Northbound": [
                 {
@@ -12116,9 +12116,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "54"
+        "name": "Cicero"
     },
-    "North Cicero/Skokie Blvd.": {
+    "54A": {
         "stops": {
             "Northbound": [
                 {
@@ -12396,9 +12396,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "54A"
+        "name": "North Cicero/Skokie Blvd."
     },
-    "South Cicero": {
+    "54B": {
         "stops": {
             "Northbound": [
                 {
@@ -12624,9 +12624,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "54B"
+        "name": "South Cicero"
     },
-    "Garfield": {
+    "55": {
         "stops": {
             "Eastbound": [
                 {
@@ -12908,9 +12908,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "55"
+        "name": "Garfield"
     },
-    "55th/Austin": {
+    "55A": {
         "stops": {
             "Eastbound": [
                 {
@@ -12996,9 +12996,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "55A"
+        "name": "55th/Austin"
     },
-    "55th/Narragansett": {
+    "55N": {
         "stops": {
             "Eastbound": [
                 {
@@ -13092,9 +13092,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "55N"
+        "name": "55th/Narragansett"
     },
-    "Milwaukee": {
+    "56": {
         "stops": {
             "Northbound": [
                 {
@@ -13376,9 +13376,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "56"
+        "name": "Milwaukee"
     },
-    "Laramie": {
+    "57": {
         "stops": {
             "Northbound": [
                 {
@@ -13500,9 +13500,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "57"
+        "name": "Laramie"
     },
-    "59th/61st": {
+    "59": {
         "stops": {
             "Eastbound": [
                 {
@@ -13800,9 +13800,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "59"
+        "name": "59th/61st"
     },
-    "Blue Island/26th": {
+    "60": {
         "stops": {
             "Eastbound": [
                 {
@@ -14064,9 +14064,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "60"
+        "name": "Blue Island/26th"
     },
-    "Archer": {
+    "62": {
         "stops": {
             "Northbound": [
                 {
@@ -14556,9 +14556,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "62"
+        "name": "Archer"
     },
-    "Archer/Harlem": {
+    "62H": {
         "stops": {
             "Eastbound": [
                 {
@@ -14732,9 +14732,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "62H"
+        "name": "Archer/Harlem"
     },
-    "63rd": {
+    "63": {
         "stops": {
             "Eastbound": [
                 {
@@ -15040,9 +15040,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "63"
+        "name": "63rd"
     },
-    "West 63rd": {
+    "63W": {
         "stops": {
             "Eastbound": [
                 {
@@ -15196,9 +15196,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "63W"
+        "name": "West 63rd"
     },
-    "Grand": {
+    "65": {
         "stops": {
             "Eastbound": [
                 {
@@ -15520,9 +15520,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "65"
+        "name": "Grand"
     },
-    "Chicago": {
+    "66": {
         "stops": {
             "Eastbound": [
                 {
@@ -15828,9 +15828,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "66"
+        "name": "Chicago"
     },
-    "67th-69th-71st": {
+    "67": {
         "stops": {
             "Eastbound": [
                 {
@@ -16184,9 +16184,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "67"
+        "name": "67th-69th-71st"
     },
-    "Northwest Highway": {
+    "68": {
         "stops": {
             "Eastbound": [
                 {
@@ -16340,9 +16340,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "68"
+        "name": "Northwest Highway"
     },
-    "Division": {
+    "70": {
         "stops": {
             "Eastbound": [
                 {
@@ -16576,9 +16576,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "70"
+        "name": "Division"
     },
-    "71st/South Shore": {
+    "71": {
         "stops": {
             "Northbound": [
                 {
@@ -16888,9 +16888,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "71"
+        "name": "71st/South Shore"
     },
-    "North": {
+    "72": {
         "stops": {
             "Eastbound": [
                 {
@@ -17184,9 +17184,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "72"
+        "name": "North"
     },
-    "Armitage": {
+    "73": {
         "stops": {
             "Eastbound": [
                 {
@@ -17432,9 +17432,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "73"
+        "name": "Armitage"
     },
-    "Fullerton": {
+    "74": {
         "stops": {
             "Eastbound": [
                 {
@@ -17712,9 +17712,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "74"
+        "name": "Fullerton"
     },
-    "74th-75th": {
+    "75": {
         "stops": {
             "Eastbound": [
                 {
@@ -17984,9 +17984,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "75"
+        "name": "74th-75th"
     },
-    "Diversey": {
+    "76": {
         "stops": {
             "Eastbound": [
                 {
@@ -18284,9 +18284,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "76"
+        "name": "Diversey"
     },
-    "Belmont": {
+    "77": {
         "stops": {
             "Eastbound": [
                 {
@@ -18632,9 +18632,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "77"
+        "name": "Belmont"
     },
-    "Montrose": {
+    "78": {
         "stops": {
             "Eastbound": [
                 {
@@ -18920,9 +18920,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "78"
+        "name": "Montrose"
     },
-    "79th": {
+    "79": {
         "stops": {
             "Eastbound": [
                 {
@@ -19304,9 +19304,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "79"
+        "name": "79th"
     },
-    "Irving Park": {
+    "80": {
         "stops": {
             "Eastbound": [
                 {
@@ -19644,9 +19644,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "80"
+        "name": "Irving Park"
     },
-    "Lawrence": {
+    "81": {
         "stops": {
             "Eastbound": [
                 {
@@ -19848,9 +19848,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "81"
+        "name": "Lawrence"
     },
-    "West Lawrence": {
+    "81W": {
         "stops": {
             "Eastbound": [
                 {
@@ -20076,9 +20076,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "81W"
+        "name": "West Lawrence"
     },
-    "Kimball-Homan": {
+    "82": {
         "stops": {
             "Northbound": [
                 {
@@ -20496,9 +20496,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "82"
+        "name": "Kimball-Homan"
     },
-    "Peterson": {
+    "84": {
         "stops": {
             "Eastbound": [
                 {
@@ -20684,9 +20684,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "84"
+        "name": "Peterson"
     },
-    "Central": {
+    "85": {
         "stops": {
             "Northbound": [
                 {
@@ -20964,9 +20964,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "85"
+        "name": "Central"
     },
-    "North Central": {
+    "85A": {
         "stops": {
             "Northbound": [
                 {
@@ -21132,9 +21132,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "85A"
+        "name": "North Central"
     },
-    "Narragansett/Ridgeland": {
+    "86": {
         "stops": {
             "Northbound": [
                 {
@@ -21404,9 +21404,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "86"
+        "name": "Narragansett/Ridgeland"
     },
-    "87th": {
+    "87": {
         "stops": {
             "Eastbound": [
                 {
@@ -21780,9 +21780,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "87"
+        "name": "87th"
     },
-    "Higgins": {
+    "88": {
         "stops": {
             "Eastbound": [
                 {
@@ -21924,9 +21924,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "88"
+        "name": "Higgins"
     },
-    "Harlem": {
+    "90": {
         "stops": {
             "Northbound": [
                 {
@@ -22160,9 +22160,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "90"
+        "name": "Harlem"
     },
-    "Austin": {
+    "91": {
         "stops": {
             "Northbound": [
                 {
@@ -22436,9 +22436,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "91"
+        "name": "Austin"
     },
-    "Foster": {
+    "92": {
         "stops": {
             "Eastbound": [
                 {
@@ -22664,9 +22664,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "92"
+        "name": "Foster"
     },
-    "California/Dodge": {
+    "93": {
         "stops": {
             "Northbound": [
                 {
@@ -22904,9 +22904,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "93"
+        "name": "California/Dodge"
     },
-    "California": {
+    "94": {
         "stops": {
             "Northbound": [
                 {
@@ -23408,9 +23408,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "94"
+        "name": "California"
     },
-    "95th": {
+    "95": {
         "stops": {
             "Eastbound": [
                 {
@@ -23980,9 +23980,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "95"
+        "name": "95th"
     },
-    "Lunt": {
+    "96": {
         "stops": {
             "Eastbound": [
                 {
@@ -24100,9 +24100,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "96"
+        "name": "Lunt"
     },
-    "Skokie": {
+    "97": {
         "stops": {
             "Eastbound": [
                 {
@@ -24352,9 +24352,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "97"
+        "name": "Skokie"
     },
-    "Avon Express": {
+    "X98": {
         "stops": {
             "Southbound": [
                 {
@@ -24367,9 +24367,9 @@
                 }
             ]
         },
-        "route_id": "X98"
+        "name": "Avon Express"
     },
-    "Jeffery Manor Express": {
+    "100": {
         "stops": {
             "Eastbound": [
                 {
@@ -24567,9 +24567,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "100"
+        "name": "Jeffery Manor Express"
     },
-    "West 103rd": {
+    "103": {
         "stops": {
             "Eastbound": [
                 {
@@ -24819,9 +24819,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "103"
+        "name": "West 103rd"
     },
-    "East 103rd": {
+    "106": {
         "stops": {
             "Eastbound": [
                 {
@@ -24931,9 +24931,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "106"
+        "name": "East 103rd"
     },
-    "Halsted/95th": {
+    "108": {
         "stops": {
             "Northbound": [
                 {
@@ -25127,9 +25127,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "108"
+        "name": "Halsted/95th"
     },
-    "111th/King Drive": {
+    "111": {
         "stops": {
             "Northbound": [
                 {
@@ -25315,9 +25315,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "111"
+        "name": "111th/King Drive"
     },
-    "Pullman Shuttle": {
+    "111A": {
         "stops": {
             "Northbound": [
                 {
@@ -25379,9 +25379,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "111A"
+        "name": "Pullman Shuttle"
     },
-    "Vincennes/111th": {
+    "112": {
         "stops": {
             "Eastbound": [
                 {
@@ -25575,9 +25575,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "112"
+        "name": "Vincennes/111th"
     },
-    "Pullman/115th": {
+    "115": {
         "stops": {
             "Northbound": [
                 {
@@ -25799,9 +25799,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "115"
+        "name": "Pullman/115th"
     },
-    "Michigan/119th": {
+    "119": {
         "stops": {
             "Northbound": [
                 {
@@ -26003,9 +26003,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "119"
+        "name": "Michigan/119th"
     },
-    "Ogilvie/Streeterville Express": {
+    "120": {
         "stops": {
             "Northbound": [
                 {
@@ -26059,9 +26059,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "120"
+        "name": "Ogilvie/Streeterville Express"
     },
-    "Union/Streeterville Express": {
+    "121": {
         "stops": {
             "Northbound": [
                 {
@@ -26115,9 +26115,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "121"
+        "name": "Union/Streeterville Express"
     },
-    "Navy Pier": {
+    "124": {
         "stops": {
             "Eastbound": [
                 {
@@ -26179,9 +26179,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "124"
+        "name": "Navy Pier"
     },
-    "Water Tower Express": {
+    "125": {
         "stops": {
             "Northbound": [
                 {
@@ -26251,9 +26251,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "125"
+        "name": "Water Tower Express"
     },
-    "Jackson": {
+    "126": {
         "stops": {
             "Eastbound": [
                 {
@@ -26527,9 +26527,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "126"
+        "name": "Jackson"
     },
-    "Stockton/LaSalle Express": {
+    "134": {
         "stops": {
             "Northbound": [
                 {
@@ -26607,9 +26607,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "134"
+        "name": "Stockton/LaSalle Express"
     },
-    "Clarendon/LaSalle Express": {
+    "135": {
         "stops": {
             "Northbound": [
                 {
@@ -26723,9 +26723,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "135"
+        "name": "Clarendon/LaSalle Express"
     },
-    "Sheridan/LaSalle Express": {
+    "136": {
         "stops": {
             "Northbound": [
                 {
@@ -26883,9 +26883,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "136"
+        "name": "Sheridan/LaSalle Express"
     },
-    "Stockton/Michigan Express": {
+    "143": {
         "stops": {
             "Northbound": [
                 {
@@ -26983,9 +26983,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "143"
+        "name": "Stockton/Michigan Express"
     },
-    "Inner Lake Shore/Michigan Exp.": {
+    "146": {
         "stops": {
             "Northbound": [
                 {
@@ -27195,9 +27195,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "146"
+        "name": "Inner Lake Shore/Michigan Exp."
     },
-    "Outer DuSable Lake Shore Exp.": {
+    "147": {
         "stops": {
             "Northbound": [
                 {
@@ -27391,9 +27391,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "147"
+        "name": "Outer DuSable Lake Shore Exp."
     },
-    "Clarendon/Michigan Express": {
+    "148": {
         "stops": {
             "Northbound": [
                 {
@@ -27519,9 +27519,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "148"
+        "name": "Clarendon/Michigan Express"
     },
-    "Sheridan": {
+    "151": {
         "stops": {
             "Northbound": [
                 {
@@ -27907,9 +27907,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "151"
+        "name": "Sheridan"
     },
-    "Addison": {
+    "152": {
         "stops": {
             "Eastbound": [
                 {
@@ -28235,9 +28235,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "152"
+        "name": "Addison"
     },
-    "Devon": {
+    "155": {
         "stops": {
             "Eastbound": [
                 {
@@ -28375,9 +28375,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "155"
+        "name": "Devon"
     },
-    "LaSalle": {
+    "156": {
         "stops": {
             "Northbound": [
                 {
@@ -28559,9 +28559,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "156"
+        "name": "LaSalle"
     },
-    "Streeterville/Taylor": {
+    "157": {
         "stops": {
             "Eastbound": [
                 {
@@ -28791,9 +28791,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "157"
+        "name": "Streeterville/Taylor"
     },
-    "West 65th": {
+    "165": {
         "stops": {
             "Eastbound": [
                 {
@@ -28919,9 +28919,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "165"
+        "name": "West 65th"
     },
-    "69th-UPS Express": {
+    "169": {
         "stops": {
             "Eastbound": [
                 {
@@ -28967,9 +28967,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "169"
+        "name": "69th-UPS Express"
     },
-    "U. of Chicago/Hyde Park": {
+    "171": {
         "stops": {
             "Northbound": [
                 {
@@ -29035,9 +29035,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "171"
+        "name": "U. of Chicago/Hyde Park"
     },
-    "U. of Chicago/Kenwood": {
+    "172": {
         "stops": {
             "Northbound": [
                 {
@@ -29103,9 +29103,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "172"
+        "name": "U. of Chicago/Kenwood"
     },
-    "U. of Chicago Hospitals Express": {
+    "192": {
         "stops": {
             "Northbound": [
                 {
@@ -29131,9 +29131,9 @@
             ],
             "Southbound": []
         },
-        "route_id": "192"
+        "name": "U. of Chicago Hospitals Express"
     },
-    "Central/Ridge": {
+    "201": {
         "stops": {
             "Eastbound": [
                 {
@@ -29379,9 +29379,9 @@
             ],
             "Westbound": []
         },
-        "route_id": "201"
+        "name": "Central/Ridge"
     },
-    "Evanston Circulator": {
+    "206": {
         "stops": {
             "Eastbound": [
                 {
@@ -29727,6 +29727,6 @@
             ],
             "Westbound": []
         },
-        "route_id": "206"
+        "name": "Evanston Circulator"
     }
 }
