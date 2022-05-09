@@ -11,10 +11,14 @@ stops = set(stop for line in stops.values() for stop in line.values())
 
 
 def get_traintracker(stop_id: int):
-    resp = requests.get(f'https://www.transitchicago.com/traintracker/arrivaltimes/?sid={stop_id}', timeout=15).text
+    try:
+        resp = requests.get(f'https://www.transitchicago.com/traintracker/arrivaltimes/?sid={stop_id}', timeout=30).text
+    except requests.ReadTimeout:
+        return []
+
+    ret = []
     response_at = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     page = bs4.BeautifulSoup(resp, 'html.parser')
-    ret = []
     for train in page.find_all("a", {"class": "estimated-arrivals-line"}):
         print(stop_id)
         estimate_type = train.find("use")

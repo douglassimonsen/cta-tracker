@@ -11,8 +11,12 @@ s3 = boto3.client("s3")
 
 
 def get_bustracker(stop_id: int):
+    try:
+        resp = requests.get(f'http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop={stop_id}', timeout=30).text
+    except requests.ReadTimeout:
+        return []
+
     ret = []
-    resp = requests.get(f'http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop={stop_id}', timeout=15).text
     response_at = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     if '<noPredictionMessage>' in resp:
         return ret
