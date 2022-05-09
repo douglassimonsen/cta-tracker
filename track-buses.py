@@ -3,13 +3,14 @@ import requests
 import bs4
 import datetime
 import bz2
+import concurrent.futures
 stops = json.load(open('bus-stops.json'))
 stops = set(stop['id'] for route_data in stops.values() for dir_stops in route_data['stops'].values() for stop in dir_stops)
 
 
 def get_bustracker(stop_id: int):
     ret = []
-    resp = requests.get(f'http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop={stop_id}').text
+    resp = requests.get(f'http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop={stop_id}', timeout=15).text
     response_at = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
     if '<noPredictionMessage>' in resp:
         return ret
@@ -30,9 +31,13 @@ def get_bustracker(stop_id: int):
 
 
 def get_data():
+    jobs = []
     ret = []
-    for stop in list(stops)[:20]:
-        ret.append(get_bustracker(stop))
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        for stop in stops:
+            jobs.append(executor.submit(get_bustracker, stop_id=stop))
+        for future in concurrent.futures.as_completed(jobs):
+            ret.append(future.result())
     return [row for chunk in ret for row in chunk]
 
 
@@ -48,6 +53,7 @@ def save_data(data: list[dict]):
 
 def main():
     data = get_data()
+    print(len(data))
     save_data(data)
 
 
