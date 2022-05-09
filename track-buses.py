@@ -28,6 +28,7 @@ def get_bustracker(stop_id: int):
         if 'mode' in row:
             row['mode'] = int(row['mode'])
         row['response_at'] = response_at
+        row['stop_id'] = stop_id
         ret.append(row)
     return ret
 
@@ -36,7 +37,7 @@ def get_data():
     jobs = []
     ret = []
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        for stop in list(stops)[:100]:
+        for stop in stops:
             jobs.append(executor.submit(get_bustracker, stop_id=stop))
         for future in concurrent.futures.as_completed(jobs):
             ret.append(future.result())
