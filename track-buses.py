@@ -4,8 +4,10 @@ import bs4
 import datetime
 import bz2
 import concurrent.futures
+import boto3
 stops = json.load(open('bus-stops.json'))
 stops = set(stop['id'] for route_data in stops.values() for dir_stops in route_data['stops'].values() for stop in dir_stops)
+s3 = boto3.client("s3")
 
 
 def get_bustracker(stop_id: int):
@@ -34,7 +36,7 @@ def get_data():
     jobs = []
     ret = []
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        for stop in stops:
+        for stop in list(stops)[:100]:
             jobs.append(executor.submit(get_bustracker, stop_id=stop))
         for future in concurrent.futures.as_completed(jobs):
             ret.append(future.result())
@@ -46,9 +48,12 @@ def save_data(data: list[dict]):
     data = bz2.compress(data.encode())
     chunk_timestamp = datetime.datetime.utcnow()
     chunk_timestamp -= datetime.timedelta(minutes=chunk_timestamp.minute % 5, seconds=chunk_timestamp.second)
-    chunk_timestamp = chunk_timestamp.strftime("%Y-%m-%dT%H-%M-%S")
-    with open(f'data/{chunk_timestamp}.bz2', 'wb') as f:
-        f.write(data)
+    chunk_timestamp = chunk_timestamp.strftime("%Y-%m-%d/%H-%M-%S")
+    s3.put_object(
+        Body=data,
+        Bucket='cta-bus-and-train-tracker',
+        Key=f'bustracker/{chunk_timestamp}.bz2',
+    )
 
 
 def main():
