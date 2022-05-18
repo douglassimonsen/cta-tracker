@@ -7,7 +7,7 @@ s3_client = boto3.client("s3")
 
 
 def rollup(folder: str):
-    today = datetime.datetime.utcnow().strftime("%Y-%m-%d")  # will need to switch to yesterday in PROD
+    today = (datetime.datetime.utcnow() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
     ret = []
     for obj in s3_bucket.objects.filter(Prefix=f'{folder}/{today}'):
         resp = s3_client.get_object(Bucket='cta-bus-and-train-tracker', Key=obj.key)['Body'].read()
