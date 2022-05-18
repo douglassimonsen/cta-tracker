@@ -71,12 +71,18 @@ def main():
     data = [deserialize(row) for row in data]
     stop_info = {}
     for row in data:
-        stop_info.setdefault((row['rn'], row['stop_id'], row['v']), []).append(row)
+        stop_info.setdefault((row['rn'], row['fd'], row['stop_id'], row['v']), []).append(row)
 
-    ret = []
-    for estimates in stop_info.values():
+    ret = {}
+    for key, estimates in stop_info.items():
         grouped_estimates = condense_estimates(estimates)
-        ret.extend(summarize(x) for x in grouped_estimates)
+        ret.setdefault(key[0], {}).setdefault(key[1], []).extend(summarize(x) for x in grouped_estimates)
+    for route, route_info in ret.items():
+        for direction, direction_info in route_info.items():
+            pass
+        
+    print(ret['8']['79th'])
+    exit()
     load_to_s3(ret)
 
 

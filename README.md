@@ -5,4 +5,6 @@
 
 
 # TODO
-1. Rollup should be named on yesterday, not today
+1. get schedule and stop order for bus
+2. get schedule and stop order for train
+3. Group stops into trips
