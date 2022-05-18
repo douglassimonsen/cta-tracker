@@ -1,18 +1,34 @@
 new Vue({
   el: '#page',
   data: {
-    routes: [],
     modes: ['bus', 'train'],
     selectedMode: 'bus',
-    selectedDay: null
+    selectedDay: null,
+    routes: [],
+    selectedRoute: null,
+    trackerData: [],
   },
   mounted: function(){
     this.selectedDay = formatDate();
-    debugger;
   },
   methods: {
     getData: function(){
-      
+      axios.get(
+        'https://cta-bus-and-train-tracker.s3.amazonaws.com/bustracker/parsed/2022-05-17.zlib', 
+        {
+          headers: {'Access-Control-Allow-Origin': '*'},
+          responseType: 'arraybuffer',
+        }
+      ).then(function(response){
+        let inflatedResponse = pako.inflate(response.data);
+        let jsonString = Array.from(inflatedResponse).map((c) => String.fromCharCode(c)).join('');
+        let data = JSON.parse(jsonString);
+        this.trackerData = data;
+        this.routes = [...new Set(data.map(x => x.rn.padStart(3, ' ')))].sort();
+      }.bind(this))
+    },
+    debug: function(){
+      debugger;
     }
   }
 
