@@ -39,3 +39,10 @@ def get_logs():
     print(response)
     exit()
 
+
+def main():
+    return get_logs()
+
+
+if __name__ == '__main__':
+    main()
