@@ -1,8 +1,7 @@
-from email.policy import default
 import boto3
 import datetime
-from pprint import pprint
 from collections import defaultdict
+import json
 ce = boto3.client('ce')
 
 
@@ -43,15 +42,23 @@ def get_costs():
                 top_5_by_day_final[day][resource] += cost
             else:
                 top_5_by_day_final[day]['other'] += cost
+    top_5_by_day_final = {
+        key1: {
+            key2: round(val, 3) for key2, val in val_dict.items()
+        } for key1, val_dict in top_5_by_day_final.items()
+    }
     return {
         'by_date': by_date,
-        'top_5_by_day': top_5_by_day,
+        'top_5_by_day': top_5_by_day_final,
         'by_service': by_service
     }
 
 
 def main():
-    return get_costs()
+    return json.load(open('dump_cost.json'))
+    ret = get_costs()
+    json.dump(ret, open('dump_cost.json', 'w'), indent=4)
+    return ret
 
 
 if __name__ == '__main__':

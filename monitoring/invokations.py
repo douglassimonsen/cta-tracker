@@ -41,6 +41,7 @@ def get_logs():
 
 
 def main():
+    return {}
     return get_logs()
 
 

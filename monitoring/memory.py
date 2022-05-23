@@ -37,5 +37,9 @@ def process_insights(data):
 
 
 def main():
-    data = get_logs()
+    data = json.load(open("dump_memory.json")) # get_logs()
     return process_insights(data)
+
+
+if __name__ == '__main__':
+    main()

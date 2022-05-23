@@ -1,0 +1,20 @@
+<table style="border:1px solid black;border-collapse:collapse">
+  <thead>
+    <tr>
+      <th style="border:1px solid black;border-collapse:collapse"></th>
+      {% for header in headers %}
+        <th style="border:1px solid black;border-collapse:collapse">{{header}}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in table %}
+      <tr>
+        <td style="border:1px solid black;border-collapse:collapse">{{index[loop.index0]}}</td>
+        {% for e in row %}
+          <td style="border:1px solid black;border-collapse:collapse">{{e}}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
