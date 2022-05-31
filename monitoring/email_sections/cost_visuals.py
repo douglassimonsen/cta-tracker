@@ -99,10 +99,12 @@ def daily_table():
     vals = data['top_5_by_day']
     headers = list(vals.keys())
     index = list(vals[list(vals.keys())[0]].keys())
+    table = [[round(vals[day].get(resource, 0), 3) for day in headers] for resource in index]
+    table = [[x or '' for x in row] for row in table]
     return template.render(
         index=index,
         headers=headers,
-        table=[[vals[day].get(resource, '') for day in headers] for resource in index]
+        table=table
     )
 
 
