@@ -4,3 +4,4 @@ deploy.zip
 dependency_layer/mypackage.zip
 *.pyc
 *.json
+sched.zip
