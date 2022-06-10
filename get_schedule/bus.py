@@ -4,16 +4,20 @@ import boto3
 import json
 import csv
 import io
+import gzip
 s = requests.session()
 s3 = boto3.client("s3")
 # Retrieved from https://www.transitchicago.com/downloads/sch_data/
 
 def load_to_s3(data, as_of, mode, route):
-    data = json.dumps(data)
+    data = gzip.compress(json.dumps(data).encode("utf-8"))
+    print(len(data))
     s3.put_object(
         Body=data,
         Bucket='cta-bus-and-train-tracker',
-        Key=f'schedules/{mode}/{route}/{as_of}.json',
+        Key=f'schedules/{mode}/{route}/{as_of}.gz',
+        ACL='public-read',
+        ContentType='application/gzip'
     )
 
 
@@ -60,8 +64,8 @@ def parse_data():
         return trips
 
     modes = {
-        '3': 'Bus',
-        '1': 'Rail'
+        '3': 'bus',
+        '1': 'rail'
     }
 
     shapes = parse_shapes()
