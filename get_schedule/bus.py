@@ -5,9 +5,11 @@ import json
 import csv
 import io
 import zlib
+import toposort
 s = requests.session()
 s3 = boto3.client("s3")
 # Retrieved from https://www.transitchicago.com/downloads/sch_data/
+
 
 def load_to_s3(data, as_of, mode, route):
     data = zlib.compress(json.dumps(data).encode("utf-8"))
@@ -45,6 +47,17 @@ def parse_data():
         return read_csv("routes.txt")
 
     def parse_stops():
+        raw_stops = read_csv("stops.txt")
+        return {
+            row['stop_id']: {
+                "name": row['stop_name'],
+                "lat": row['stop_lat'],
+                "lon": row['stop_lon']
+            }
+            for row in raw_stops
+        }
+
+    def parse_stop_times():
         stop_times_raw = read_csv("stop_times.txt")
         stop_times = {}
         for row in stop_times_raw:
@@ -57,35 +70,47 @@ def parse_data():
         for trip in raw_trips:
             trips.setdefault(trip['route_id'], []).append({
                 k: trip[k] 
-                for k in ['trip_id', 'direction_id', 'shape_id', 'direction']
+                for k in ['trip_id', 'direction', 'shape_id', 'direction']
             })
         return trips
+
+    def get_trip_info(route):
+        route_trips = trips[route['route_id']]
+
+        route_stops = set()
+        route_orders = {}
+        for trip in route_trips:
+            trip['stop_times'] = stop_times[trip['trip_id']]
+            stop_ids = [x['stop_id'] for x in trip['stop_times']]
+            if trip['direction'] not in route_orders:
+                route_orders[trip['direction']] = stop_ids
+            route_stops.update([x['stop_id'] for x in stop_times[trip['trip_id']]])
+        return route_trips, route_stops, route_orders
 
     modes = {
         '3': 'bus',
         '1': 'rail'
     }
 
-    shapes = parse_shapes()
+    # shapes = parse_shapes()
     routes = parse_routes()
     trips = parse_trips()
     stops = parse_stops()
+    stop_times = parse_stop_times()
 
     ret = []
     for route in routes:
         print(route['route_id'])
-        route_trips = trips[route['route_id']]
-        for trip in route_trips:
-            trip['stops'] = stops[trip['trip_id']]
-        shape_ids = set(x['shape_id'] for x in route_trips)
+
+        route_trips, route_stops, route_orders = get_trip_info(route)
+        # shape_ids = set(x['shape_id'] for x in route_trips)
         route_ret = {
             'id': route['route_id'],
             'name': route['route_long_name'],
             'color': route['route_color'],
-            'shapes': {
-                shape_id: shapes[shape_id]
-                for shape_id in shape_ids
-            },
+            # 'shapes': { shape_id: shapes[shape_id] for shape_id in shape_ids},
+            'stops': {stop: stops[stop] for stop in route_stops},
+            'stop_order': route_orders,
             'trips': route_trips
         }
         load_to_s3(
