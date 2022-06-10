@@ -12,9 +12,15 @@
     <script defer src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
     <script defer src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
 
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
     <script defer src="page.js"></script>
+    <script defer src="d3-chart.js"></script>
   </head>
   <body>
+    <div id="chart">
+
+    </div>
     <div id="page">
       <div style="width:360px">
         <b-form-select v-model="selectedMode" :options="modes" class="mb-2"></b-form-select>
