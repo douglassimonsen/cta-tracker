@@ -31,52 +31,73 @@ def read_csv(source):
         return list(csv.DictReader(routes_raw))
 
 
-def parse_data(typ):
-    def get_sources():
-            data = read_csv("routes.txt")
-            routes = [row for row in data if row['route_type'] == typ]
-            trips = read_csv("trips.txt")
+def parse_data():
+    def parse_shapes():
+        raw_shapes = read_csv("shapes.txt")
+        shapes = {}
+        for row in raw_shapes:
+            shapes.setdefault(row['shape_id'], []).append(row)
+        return shapes
 
-            shapes_raw = read_csv("shapes.txt")
-            shapes = {}
-            for row in shapes_raw:
-                shapes.setdefault(row['shape_id'], []).append(row)
+    def parse_routes():
+        return read_csv("routes.txt")
 
-            stop_times_raw = read_csv("stop_times.txt")
-            stop_times = {}
-            for row in stop_times_raw:
-                stop_times.setdefault(row['trip_id'], []).append(row)
+    def parse_stops():
+        stop_times_raw = read_csv("stop_times.txt")
+        stop_times = {}
+        for row in stop_times_raw:
+            stop_times.setdefault(row['trip_id'], []).append(row)
+        return stop_times
 
-            for route in routes:
-                route_ret = {
-                    k: route[k]
-                    for k in ['route_short_name', 'route_long_name', 'route_url', 'route_color']
-                }
-                route_ret['trips'] = {
-                    trip['trip_id']: {
-                        'stops': stop_times[trip['trip_id']],
-                        'shape': shapes[trip['trip_id']],
-                    }
-                for trip in trips}
-                print("\n" * 5)
-                # print(route_ret)
-                # shape_ids = list(set(t['shape_id'] for t in trips))
-                exit()
-            print(trips[0])
-            exit()
+    def parse_trips():
+        raw_trips = read_csv("trips.txt")
+        trips = {}
+        for trip in raw_trips:
+            trips.setdefault(trip['route_id'], []).append({
+                k: trip[k] 
+                for k in ['trip_id', 'direction_id', 'shape_id', 'direction']
+            })
+        return trips
 
+    modes = {
+        '3': 'Bus',
+        '1': 'Rail'
+    }
 
-    typ = {
-        'Bus': '3',
-        'Rail': '1'
-    }[typ]
-    get_sources()
-    print(routes[0])
+    shapes = parse_shapes()
+    routes = parse_routes()
+    trips = parse_trips()
+    stops = parse_stops()
+
+    ret = []
+    for route in routes:
+        print(route['route_id'])
+        route_trips = trips[route['route_id']]
+        for trip in route_trips:
+            trip['stops'] = stops[trip['trip_id']]
+        shape_ids = set(x['shape_id'] for x in route_trips)
+        route_ret = {
+            'id': route['route_id'],
+            'name': route['route_long_name'],
+            'color': route['route_color'],
+            'shapes': {
+                shape_id: shapes[shape_id]
+                for shape_id in shape_ids
+            },
+            'trips': route_trips
+        }
+        load_to_s3(
+            route_ret,
+            'latest',
+            modes[route['route_type']],
+            route['route_id'],
+        )
+            
 
 
 def main():
     # get_data()
-    parse_data('Bus')
+    parse_data()
 
 
 if __name__ == '__main__':
