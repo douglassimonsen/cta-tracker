@@ -7,24 +7,26 @@ new Vue({
     routes: ['8'],
     selectedRoute: '8',
     trackerData: [],
+    scheduleData: null,
   },
   mounted: function(){
     this.selectedDay = formatDate();
     this.getData();
   },
   methods: {
-    showRoute: function(){
-
-    },
+    showRoute: function(){},
     getData: function(){
-      return;
       ReadCompressed('https://cta-bus-and-train-tracker.s3.amazonaws.com/schedules/rail/Blue/latest.gz').then(function(data){
-        debugger;
-      })
+        this.scheduleData = data;
+        chart.initialize(
+          data.stop_order.North.map(function(x, i){return {name: data.stops[x].name, dist: i}})
+        );
+      }.bind(this))
+      return;
       ReadCompressed('https://cta-bus-and-train-tracker.s3.amazonaws.com/bustracker/parsed/2022-05-17.zlib').then(function(data){
         this.trackerData = data;
         this.routes = [...new Set(data.map(x => x.rn.padStart(3, ' ')))].sort();
-      })      
+      }.bind(this))      
     },
     debug: function(){
       debugger;
