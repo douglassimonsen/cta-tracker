@@ -4,8 +4,8 @@ new Vue({
     modes: ['bus', 'train'],
     selectedMode: 'bus',
     selectedDay: null,
-    routes: [],
-    selectedRoute: null,
+    routes: ['8'],
+    selectedRoute: '8',
     trackerData: [],
   },
   mounted: function(){
@@ -17,6 +17,7 @@ new Vue({
 
     },
     getData: function(){
+      return;
       ReadCompressed('https://cta-bus-and-train-tracker.s3.amazonaws.com/schedules/rail/Blue/latest.gz').then(function(data){
         debugger;
       })
