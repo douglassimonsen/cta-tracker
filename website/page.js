@@ -10,22 +10,20 @@ new Vue({
   },
   mounted: function(){
     this.selectedDay = formatDate();
+    this.getData();
   },
   methods: {
+    showRoute: function(){
+
+    },
     getData: function(){
-      axios.get(
-        'https://cta-bus-and-train-tracker.s3.amazonaws.com/bustracker/parsed/2022-05-17.zlib', 
-        {
-          headers: {'Access-Control-Allow-Origin': '*'},
-          responseType: 'arraybuffer',
-        }
-      ).then(function(response){
-        let inflatedResponse = pako.inflate(response.data);
-        let jsonString = Array.from(inflatedResponse).map((c) => String.fromCharCode(c)).join('');
-        let data = JSON.parse(jsonString);
+      ReadCompressed('https://cta-bus-and-train-tracker.s3.amazonaws.com/schedules/rail/Blue/latest.gz').then(function(data){
+        debugger;
+      })
+      ReadCompressed('https://cta-bus-and-train-tracker.s3.amazonaws.com/bustracker/parsed/2022-05-17.zlib').then(function(data){
         this.trackerData = data;
         this.routes = [...new Set(data.map(x => x.rn.padStart(3, ' ')))].sort();
-      }.bind(this))
+      })      
     },
     debug: function(){
       debugger;
@@ -33,7 +31,20 @@ new Vue({
   }
 
 });
-
+function ReadCompressed(url){
+  return axios.get(
+    url, 
+    {
+      headers: {'Access-Control-Allow-Origin': '*'},
+      responseType: 'arraybuffer',
+    }
+  ).then(function(response){
+    let inflatedResponse = pako.inflate(response.data);
+    let jsonString = Array.from(inflatedResponse).map((c) => String.fromCharCode(c)).join('');
+    let data = JSON.parse(jsonString);
+    return data;
+  })
+}
 function formatDate(dt){
   if(!dt){
     dt = new Date();

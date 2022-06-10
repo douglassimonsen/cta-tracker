@@ -4,20 +4,18 @@ import boto3
 import json
 import csv
 import io
-import gzip
+import zlib
 s = requests.session()
 s3 = boto3.client("s3")
 # Retrieved from https://www.transitchicago.com/downloads/sch_data/
 
 def load_to_s3(data, as_of, mode, route):
-    data = gzip.compress(json.dumps(data).encode("utf-8"))
-    print(len(data))
+    data = zlib.compress(json.dumps(data).encode("utf-8"))
     s3.put_object(
         Body=data,
         Bucket='cta-bus-and-train-tracker',
         Key=f'schedules/{mode}/{route}/{as_of}.gz',
         ACL='public-read',
-        ContentType='application/gzip'
     )
 
 
