@@ -17,10 +17,16 @@ new Vue({
     showRoute: function(){},
     getData: function(){
       ReadCompressed('https://cta-bus-and-train-tracker.s3.amazonaws.com/schedules/rail/Blue/latest.gz').then(function(data){
+        data.stop_order = {
+          North: data.stop_order.North.map(function(x, i){return {name: data.stops[x].name, dist: i}}),
+          South: data.stop_order.South.map(function(x, i){return {name: data.stops[x].name, dist: i}}),
+        }
         this.scheduleData = data;
         chart.initialize(
-          data.stop_order.North.map(function(x, i){return {name: data.stops[x].name, dist: i}})
+          data.stop_order.North,
+          this.selectedDay,
         );
+        chart.addTrips(data.trips, data.stop_order);
       }.bind(this))
       return;
       ReadCompressed('https://cta-bus-and-train-tracker.s3.amazonaws.com/bustracker/parsed/2022-05-17.zlib').then(function(data){
