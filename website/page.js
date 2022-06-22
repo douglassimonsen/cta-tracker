@@ -8,7 +8,7 @@ new Vue({
     routes: ['8'],
     selectedRoute: '8',
     selectedDirection: 'South',
-    trackerData: [],
+    actualData: [],
     scheduleData: null,
   },
   mounted: function(){
@@ -22,17 +22,16 @@ new Vue({
         ReadCompressed(`${BASE_URL}/schedules/rail/Blue/latest.gz`),
         ReadCompressed(`${BASE_URL}/traintracker/rollup/2022-06-13.bz2`),
       ]).then(function(data){
-        debugger;
-        const directions = Object.keys(data.stop_order);
-        Object.values(data.stop_order).forEach(x => {x.forEach(y => {y['name'] = data.stops[y.stop_id].name})});
-        this.scheduleData = data;
+        [schedule, actual] = data
+        const directions = Object.keys(schedule.stop_order);
+        Object.values(schedule.stop_order).forEach(x => {x.forEach(y => {y['name'] = schedule.stops[y.stop_id].name})});
+        this.scheduleData = schedule;
         chart.initialize(
-          data.stop_order[this.selectedDirection],
+          schedule.stop_order[this.selectedDirection],
           this.selectedDay,
         );
-        chart.addTrips(data.trips, data.stop_order, "blue");
+        chart.addTrips(schedule.trips, schedule.stop_order, "blue");
         this.trackerData = data;
-        this.routes = [...new Set(data.map(x => x.rn.padStart(3, ' ')))].sort();
       }.bind(this))
     },
     debug: function(){

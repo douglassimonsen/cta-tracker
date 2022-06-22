@@ -45,9 +45,7 @@ function addTrips(trips, stop_order, color){
   const body = d3.select("#string-chart");
   body.selectAll(".line").append("g").attr("class", "line")
       .data(trips.slice(0, 5)).enter().append("path")
-      .attr("d", function(stop_order, d){
-        return graphFuncs.line(d.stop_times);
-      })
+      .attr("d", d => graphFuncs.line(d.stop_times))
       .attr("fill", "none").attr("stroke", color).attr("stroke-width", 2)
 }
 
