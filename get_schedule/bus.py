@@ -81,7 +81,7 @@ def parse_data():
         route_orders = {}
         for trip in route_trips:
             trip['stop_times'] = stop_times[trip['trip_id']]
-            if trip['direction'] not in route_orders:
+            if trip['direction'] not in route_orders or len(trip['stop_times']) > len(route_orders[trip['direction']]):  # now we're choosing the longest per direction
                 route_orders[trip['direction']] = [{"stop_id": x['stop_id'], 'dist': x['shape_dist_traveled']} for x in trip['stop_times']]
             route_stops.update([x['stop_id'] for x in stop_times[trip['trip_id']]])
         return route_trips, route_stops, route_orders
@@ -100,7 +100,6 @@ def parse_data():
     ret = []
     for route in routes:
         print(route['route_id'])
-
         route_trips, route_stops, route_orders = get_trip_info(route)
         # shape_ids = set(x['shape_id'] for x in route_trips)
         route_ret = {

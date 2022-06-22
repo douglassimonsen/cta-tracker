@@ -21,7 +21,7 @@ new Vue({
         Object.values(data.stop_order).forEach(x => {x.forEach(y => {y['name'] = data.stops[y.stop_id].name})});
         this.scheduleData = data;
         chart.initialize(
-          data.stop_order.North,
+          data.stop_order.South,
           this.selectedDay,
         );
         chart.addTrips(data.trips, data.stop_order);
