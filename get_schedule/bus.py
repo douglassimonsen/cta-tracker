@@ -81,9 +81,8 @@ def parse_data():
         route_orders = {}
         for trip in route_trips:
             trip['stop_times'] = stop_times[trip['trip_id']]
-            stop_ids = [x['stop_id'] for x in trip['stop_times']]
             if trip['direction'] not in route_orders:
-                route_orders[trip['direction']] = stop_ids
+                route_orders[trip['direction']] = [{"stop_id": x['stop_id'], 'dist': x['shape_dist_traveled']} for x in trip['stop_times']]
             route_stops.update([x['stop_id'] for x in stop_times[trip['trip_id']]])
         return route_trips, route_stops, route_orders
 

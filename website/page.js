@@ -17,10 +17,8 @@ new Vue({
     showRoute: function(){},
     getData: function(){
       ReadCompressed('https://cta-bus-and-train-tracker.s3.amazonaws.com/schedules/rail/Blue/latest.gz').then(function(data){
-        data.stop_order = {
-          North: data.stop_order.North.map(function(x, i){return {name: data.stops[x].name, dist: i}}),
-          South: data.stop_order.South.map(function(x, i){return {name: data.stops[x].name, dist: i}}),
-        }
+        const directions = Object.keys(data.stop_order);
+        Object.values(data.stop_order).forEach(x => {x.forEach(y => {y['name'] = data.stops[y.stop_id].name})});
         this.scheduleData = data;
         chart.initialize(
           data.stop_order.North,
