@@ -32,6 +32,7 @@ new Vue({
         );
         chart.addTrips(schedule.trips, schedule.stop_order, "blue");
         this.trackerData = data;
+        debugger;
       }.bind(this))
     },
     debug: function(){
