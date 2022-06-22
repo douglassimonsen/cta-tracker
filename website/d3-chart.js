@@ -12,20 +12,21 @@ const graphFuncs = {
   yScale: null,
   xScale: null,
   daySelected: null,
-  line: null
+  line: null,
+  body: null,
 }
 function initialize(stations, day){
   const container = d3.select("div#chart");
-  body = container.append("svg")
+  graphFuncs.body = container.append("svg")
       .attr("id", "string-chart")
       .attr("width", SIZE.width)
       .attr("height", SIZE.height)
       .style("background-color", "aliceblue")
-      .style("margin", "20px");
+      .style("margin", "20px").append("g");
   
   MARGIN.left = 20 + stations.reduce((a, b) => Math.max(a, b.name.length * 4.4), 0);
   graphFuncs.yScale = d3.scaleLinear().domain(d3.extent(stations, d => +d.dist)).range([SIZE.height - MARGIN.bottom, MARGIN.top]);
-  body.append("g")
+  graphFuncs.body.append("g")
       .attr("class", "y-axis")
       .attr("transform", `translate(${MARGIN.left}, 0)`)
       .call(d3.axisLeft(graphFuncs.yScale)
@@ -39,11 +40,15 @@ function initialize(stations, day){
     new Date(+graphFuncs.daySelected + 1000 * 60 * 60 * 27), // +- 3 hours around the date
   ]).range([MARGIN.left, SIZE.width - MARGIN.right]);
   graphFuncs.line = d3.line().x(d => graphFuncs.xScale(new Date(day + 'T' + d.arrival_time))).y(d => graphFuncs.yScale(d.shape_dist_traveled));
-  body.append("g").attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(d3.axisBottom(graphFuncs.xScale));
+  graphFuncs.body.append("g").attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(d3.axisBottom(graphFuncs.xScale));
+
+  let zoom = d3.zoom().on("zoom", function(evt){
+    d3.select("#string-chart g").attr("transform", evt.transform);
+  });
+  d3.select("svg").call(zoom);
 }
 function addTrips(trips, stop_order, color){
-  const body = d3.select("#string-chart");
-  body.selectAll(".line").append("g").attr("class", "line")
+  graphFuncs.body.selectAll(".line").append("g").attr("class", "line")
       .data(trips.slice(0, 5)).enter().append("path")
       .attr("d", d => graphFuncs.line(d.stop_times))
       .attr("fill", "none").attr("stroke", color).attr("stroke-width", 2)

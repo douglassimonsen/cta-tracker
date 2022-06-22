@@ -61,7 +61,7 @@ def get_raw(dt, transit_mode):
         row['estimated_arrival'] = row['response_at'] + datetime.timedelta(minutes=row['pt'])
         return {
             'route': row['rn'],
-            'destination': row['rd'],
+            'direction': row['rd'],
             'response_at': row['response_at'],
             'estimated_arrival': row['estimated_arrival'],
             'estimate_type': '#icon-wifi',
@@ -75,7 +75,7 @@ def get_raw(dt, transit_mode):
         row['estimated_arrival'] = row['response_at'] + datetime.timedelta(minutes=row['wait_time'])
         return {
             'route': row['route'].split()[0],
-            'destination': row['destination'],
+            'direction': row['destination'],
             'response_at': row['response_at'],
             'estimated_arrival': row['estimated_arrival'],
             'estimate_type': row['estimate_type'],
@@ -106,14 +106,20 @@ def process_data(data):
             exit()
 
 
-def train_preprocessing(data):
+def train_preprocessing(data, schedule_stops):
     for row in data:
         if row['route'] in ('Orange', 'Brown', 'Pink'):
             row['destination'] = 'Loop'
+        else:
+            print(row['destination'])
+            print(schedule_stops[row['route']].keys())
+            # TODO convert stops to stop_ids
+            # convert destinations to directions
+            exit()
     return data
 
 
-def bus_preprocessing(data):
+def bus_preprocessing(data, schedule_stops):
     return data
 
 
@@ -130,9 +136,8 @@ def main():
     schedule_stops = get_schedule_stops()
     for typ in ['train', 'bus']:
         data = get_raw(yesterday, typ)
-        data = {'train': train_preprocessing, 'bus': bus_preprocessing}[typ](data)
+        data = {'train': train_preprocessing, 'bus': bus_preprocessing}[typ](data, schedule_stops)
         data = process_data(data)
-        print
         exit()
         load_to_s3(data)
 
