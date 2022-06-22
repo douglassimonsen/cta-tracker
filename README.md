@@ -9,3 +9,4 @@
 5. Figure out weekday, saturday, sunday schedule
 6. Identify trips that are just subtrips of another and merge them (be sure to shift if the starts are different)
 7. Figure out zoom
+8. merge parsed and rollup into just rollup

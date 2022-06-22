@@ -33,7 +33,7 @@ def condense_estimates(estimates):
 
 def summarize(estimate_chunk):
     ret = estimate_chunk.pop(-1)
-    ret['estimates'] = [
+    ret['previous_estimates'] = [
         {
             'response_diff': (estimate['response_at'] - estimate_chunk[-1]['response_at']).total_seconds(),
             'estimate_diff': (estimate['estimated_arrival'] - estimate_chunk[-1]['estimated_arrival']).total_seconds(),
@@ -103,15 +103,31 @@ def process_data(data):
         ret.setdefault(key[0], {}).setdefault(key[1], []).extend(summarize(x) for x in grouped_estimates)
     for route, route_info in ret.items():
         for direction, direction_info in route_info.items():
-            pass
+            print(direction_info[0])
+            exit()
+
+
+def train_preprocessing(data):
+    for row in data:
+        if row['route'] in ('Orange', 'Brown', 'Pink'):
+            row['destination'] = 'Loop'
+    return data
+
+
+def bus_preprocessing(data):
+    return data
+
+
+def get_schedule_stops():
+    
 
 
 def main():
     yesterday = (datetime.datetime.utcnow() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+    schedule_stops = get_schedule_stops()
     for typ in ['train', 'bus']:
         data = get_raw(yesterday, typ)
-        for row in data:
-            print(row['vehicle_id'])
+        data = {'train': train_preprocessing, 'bus': bus_preprocessing}[typ](data)
         data = process_data(data)
         print
         exit()
