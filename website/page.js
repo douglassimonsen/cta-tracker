@@ -1,3 +1,4 @@
+const BASE_URL = "https://cta-bus-and-train-tracker.s3.amazonaws.com"
 new Vue({
   el: '#page',
   data: {
@@ -6,6 +7,7 @@ new Vue({
     selectedDay: null,
     routes: ['8'],
     selectedRoute: '8',
+    selectedDirection: 'South',
     trackerData: [],
     scheduleData: null,
   },
@@ -16,21 +18,22 @@ new Vue({
   methods: {
     showRoute: function(){},
     getData: function(){
-      ReadCompressed('https://cta-bus-and-train-tracker.s3.amazonaws.com/schedules/rail/Blue/latest.gz').then(function(data){
+      Promise.all([
+        ReadCompressed(`${BASE_URL}/schedules/rail/Blue/latest.gz`),
+        ReadCompressed(`${BASE_URL}/traintracker/rollup/2022-06-13.bz2`),
+      ]).then(function(data){
+        debugger;
         const directions = Object.keys(data.stop_order);
         Object.values(data.stop_order).forEach(x => {x.forEach(y => {y['name'] = data.stops[y.stop_id].name})});
         this.scheduleData = data;
         chart.initialize(
-          data.stop_order.South,
+          data.stop_order[this.selectedDirection],
           this.selectedDay,
         );
-        chart.addTrips(data.trips, data.stop_order);
-      }.bind(this))
-      return;
-      ReadCompressed('https://cta-bus-and-train-tracker.s3.amazonaws.com/bustracker/parsed/2022-05-17.zlib').then(function(data){
+        chart.addTrips(data.trips, data.stop_order, "blue");
         this.trackerData = data;
         this.routes = [...new Set(data.map(x => x.rn.padStart(3, ' ')))].sort();
-      }.bind(this))      
+      }.bind(this))
     },
     debug: function(){
       debugger;
@@ -45,12 +48,18 @@ function ReadCompressed(url){
       headers: {'Access-Control-Allow-Origin': '*'},
       responseType: 'arraybuffer',
     }
-  ).then(function(response){
-    let inflatedResponse = pako.inflate(response.data);
-    let jsonString = Array.from(inflatedResponse).map((c) => String.fromCharCode(c)).join('');
-    let data = JSON.parse(jsonString);
+  ).then(function(url, response){
+    let inflatedResponse;
+    if(url.endsWith(".gz")){
+      inflatedResponse = pako.inflate(response.data);
+      inflatedResponse = Array.from(inflatedResponse).map((c) => String.fromCharCode(c)).join('');
+    }
+    else{
+      inflatedResponse = bzip2.simple(bzip2.array(new Uint8Array(response.data)));
+    }
+    let data = JSON.parse(inflatedResponse);
     return data;
-  })
+  }.bind(null, url));
 }
 function formatDate(dt){
   if(!dt){

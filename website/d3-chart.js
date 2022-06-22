@@ -41,14 +41,14 @@ function initialize(stations, day){
   graphFuncs.line = d3.line().x(d => graphFuncs.xScale(new Date(day + 'T' + d.arrival_time))).y(d => graphFuncs.yScale(d.shape_dist_traveled));
   body.append("g").attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(d3.axisBottom(graphFuncs.xScale));
 }
-function addTrips(trips, stop_order){
+function addTrips(trips, stop_order, color){
   const body = d3.select("#string-chart");
   body.selectAll(".line").append("g").attr("class", "line")
       .data(trips.slice(0, 5)).enter().append("path")
       .attr("d", function(stop_order, d){
         return graphFuncs.line(d.stop_times);
-      }.bind(null, stop_order))
-      .attr("fill", "none").attr("stroke", "blue").attr("stroke-width", 2)
+      })
+      .attr("fill", "none").attr("stroke", color).attr("stroke-width", 2)
 }
 
 const chart = {
