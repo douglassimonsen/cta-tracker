@@ -4,19 +4,19 @@ import boto3
 import json
 import csv
 import io
-import zlib
-import toposort
+import bz2
+import os; os.chdir(os.path.dirname(os.path.abspath(__file__)))
 s = requests.session()
 s3 = boto3.client("s3")
 # Retrieved from https://www.transitchicago.com/downloads/sch_data/
 
 
-def load_to_s3(data, as_of, mode, route):
-    data = zlib.compress(json.dumps(data).encode("utf-8"))
+def load_to_s3(data, path):
+    data = bz2.compress(json.dumps(data).encode("utf-8"))
     s3.put_object(
         Body=data,
         Bucket='cta-bus-and-train-tracker',
-        Key=f'schedules/{mode}/{route}/{as_of}.gz',
+        Key=path,
         ACL='public-read',
     )
 
@@ -98,10 +98,15 @@ def parse_data():
     stop_times = parse_stop_times()
 
     ret = []
+    full_stop_orders = {}
     for route in routes:
         print(route['route_id'])
         route_trips, route_stops, route_orders = get_trip_info(route)
         # shape_ids = set(x['shape_id'] for x in route_trips)
+        full_stop_orders[route['route_id']] = {
+            'orders': route_orders,
+            'stops': {stop: stops[stop] for stop in route_stops},
+        }
         route_ret = {
             'id': route['route_id'],
             'name': route['route_long_name'],
@@ -113,11 +118,12 @@ def parse_data():
         }
         load_to_s3(
             route_ret,
-            'latest',
-            modes[route['route_type']],
-            route['route_id'],
+            f"schedules/{modes[route['route_type']]}/{route['route_id']}/latest.bz2"
         )
-            
+    load_to_s3(
+        full_stop_orders,
+        'schedules/stop_order/latest.bz2',
+    )
 
 
 def main():

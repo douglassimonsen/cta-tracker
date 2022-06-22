@@ -2,7 +2,6 @@ import boto3
 import datetime
 import json
 import bz2
-import zlib
 s3_client = boto3.client("s3")
 DT_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
@@ -47,11 +46,11 @@ def summarize(estimate_chunk):
 def load_to_s3(data):
     yesterday = (datetime.datetime.utcnow() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
     data = json.dumps(data)
-    data = zlib.compress(data.encode())
+    data = bz2.compress(data.encode())
     s3_client.put_object(
         Body=data,
         Bucket='cta-bus-and-train-tracker',
-        Key=f'bustracker/parsed/{yesterday}.zlib',
+        Key=f'bustracker/parsed/{yesterday}.bz2',
     )
 
 
@@ -119,7 +118,11 @@ def bus_preprocessing(data):
 
 
 def get_schedule_stops():
-    
+    raw = s3_client.get_object(
+        Bucket='cta-bus-and-train-tracker', 
+        Key=f'schedules/stop_order/latest.bz2',
+    )['Body'].read()
+    return json.loads(bz2.decompress(raw))
 
 
 def main():
