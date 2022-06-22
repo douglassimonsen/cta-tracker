@@ -19,3 +19,35 @@
   fill:  black;
   font-family:"Arial Black", Gadget, sans-serif;
 }
+#info-box {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  height: 30vh;
+  width: 20vw;
+  background-color: aliceblue;
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+#info-box table {
+  width: 100%;
+  table-layout: fixed;
+}
+#info-box th {
+  width: 100%;
+  text-align: center;
+  padding: 12px 15px;
+  font-size: 1.35em;
+}
+#info-box td {
+  width: 100%;
+  border-bottom: 1px solid #dddddd;
+  padding: 12px 15px;
+}
+#info-box td:last-child {
+  border-left: 1px solid #dddddd;
+}

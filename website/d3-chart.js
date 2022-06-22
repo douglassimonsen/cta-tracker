@@ -51,9 +51,26 @@ function addTrips(trips, stop_order, color){
   graphFuncs.body.selectAll(".line").append("g").attr("class", "line")
       .data(trips.slice(0, 5)).enter().append("path")
       .attr("d", d => graphFuncs.line(d.stop_times))
-      .attr("fill", "none").attr("stroke", color).attr("stroke-width", 2)
+      .attr("fill", "none").attr("stroke", color).attr("stroke-width", 2);
+  graphFuncs.body.selectAll(".stop-group").data(trips.slice(0, 5)).enter()
+                 .append("g").attrs({
+                  "line-index": (_, i) => i,
+                  "line-type": "schedule",
+                 }).selectAll(".stop-point").data(d => d.stop_times).enter()
+                 .append("circle").attrs({
+                  "cx": d => graphFuncs.xScale(new Date(graphFuncs.day + 'T' + d.arrival_time)),
+                  "cy": d => graphFuncs.yScale(d.shape_dist_traveled),
+                  "fill": "blue",
+                  "stop-index": (_, i) => i,
+                  "r": 10
+                 }).on("mouseover", function(trips, evt){
+                  let lineIndex = +evt.target.parentElement.getAttribute("line-index");
+                  let stopIndex = +evt.target.getAttribute("stop-index");
+                  let lineType = evt.target.parentElement.getAttribute("line-type");
+                  InfoBox(trips[lineIndex], stopIndex);
+                 }.bind(null, trips))
 }
-
+function InfoBox(tripInfo, stopIndex){}
 const chart = {
   initialize: initialize,
   addTrips: addTrips,

@@ -18,6 +18,7 @@ new Vue({
   methods: {
     showRoute: function(){},
     getData: function(){
+      return;
       Promise.all([
         ReadCompressed(`${BASE_URL}/schedules/rail/Blue/latest.gz`),
         ReadCompressed(`${BASE_URL}/traintracker/rollup/2022-06-13.bz2`),
