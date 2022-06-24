@@ -2,7 +2,7 @@ const BASE_URL = "https://cta-bus-and-train-tracker.s3.amazonaws.com"
 const app = new Vue({
   el: '#page',
   data: {
-    formData: null,
+    formData: {day: '2022-06-23', direction: 'South'},
     actualData: [],
     scheduleData: null,
 },
@@ -20,11 +20,11 @@ const app = new Vue({
         [this.scheduleData, this.actualData] = data
         const directions = Object.keys(this.scheduleData.stop_order);
         Object.values(this.scheduleData.stop_order).forEach(x => {x.forEach(y => {y['name'] = this.scheduleData.stops[y.stop_id].name})});
-        chart.initialize(
-          this.scheduleData.stop_order[this.selectedDirection || 'South'],
-          this.selectedDay,
-        );
-        chart.addTrips(this.scheduleData.trips, this.scheduleData.stop_order, "blue");
+        // chart.initialize(
+        //   this.scheduleData.stop_order[this.selectedDirection || 'South'],
+        //   this.formData.selectedDay,
+        // );
+        // chart.addTrips(this.scheduleData.trips, this.scheduleData.stop_order, "blue");
         // debugger;
       }.bind(this))
     },

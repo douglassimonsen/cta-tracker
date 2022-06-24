@@ -12,7 +12,7 @@ Vue.component('input-form', {
     return {
       modes: ['bus', 'train'],
       selectedMode: 'bus',
-      selectedDay: null,
+      selectedDay: '2020-10-10',
       routes: ['8'],
       selectedRoute: '8',
       selectedDirection: 'South',
@@ -24,6 +24,7 @@ Vue.component('input-form', {
         route: this.route,
         mode: this.mode,
         direction: this.direction,
+        day: this.selectedDay,
         event: evt,
       });
     },
