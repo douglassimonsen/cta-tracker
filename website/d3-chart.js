@@ -9,11 +9,16 @@ const SIZE = {
   width: 1200,
 }
 const graphFuncs = {
+  yG: null,
   yScale: null,
+  yAxis: null,
+  xG: null,
   xScale: null,
+  xAxis: null,
   daySelected: null,
   line: null,
   body: null,
+  visual: null,
 }
 function initialize(stations, day){
   const container = d3.select("div#chart");
@@ -23,16 +28,17 @@ function initialize(stations, day){
       .attr("height", SIZE.height)
       .style("background-color", "aliceblue")
       .style("margin", "20px").append("g");
-  
+  graphFuncs.visual = graphFuncs.body.append("g");
   MARGIN.left = 20 + stations.reduce((a, b) => Math.max(a, b.name.length * 4.4), 0);
   graphFuncs.yScale = d3.scaleLinear().domain(d3.extent(stations, d => +d.dist)).range([SIZE.height - MARGIN.bottom, MARGIN.top]);
-  graphFuncs.body.append("g")
-      .attr("class", "y-axis")
-      .attr("transform", `translate(${MARGIN.left}, 0)`)
-      .call(d3.axisLeft(graphFuncs.yScale)
-              .tickValues(stations.map(x => x.dist))
-              .tickFormat(function(d, i){return stations[i].name})
-      );
+  graphFuncs.yAxis = d3.axisLeft(graphFuncs.yScale)
+                       .tickValues(stations.map(x => x.dist))
+                       .tickFormat(function(d, i){return stations[i].name});
+  graphFuncs.yG = graphFuncs.body.append("g");
+  graphFuncs.yG.attr("class", "y-axis")
+            .attr("transform", `translate(${MARGIN.left}, 0)`)
+            .call(graphFuncs.yAxis);
+
   graphFuncs.day = day;
   graphFuncs.daySelected = new Date(day + 'T00:00:00');
   graphFuncs.xScale = d3.scaleTime().domain([
@@ -40,19 +46,23 @@ function initialize(stations, day){
     new Date(+graphFuncs.daySelected + 1000 * 60 * 60 * 27), // +- 3 hours around the date
   ]).range([MARGIN.left, SIZE.width - MARGIN.right]);
   graphFuncs.line = d3.line().x(d => graphFuncs.xScale(new Date(day + 'T' + d.arrival_time))).y(d => graphFuncs.yScale(d.shape_dist_traveled));
-  graphFuncs.body.append("g").attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(d3.axisBottom(graphFuncs.xScale));
+  graphFuncs.xG = graphFuncs.body.append("g")
+  graphFuncs.xAxis = d3.axisBottom(graphFuncs.xScale);
+  graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);
 
   let zoom = d3.zoom().on("zoom", function(evt){
-    d3.select("#string-chart g").attr("transform", evt.transform);
+    graphFuncs.xG.call(graphFuncs.xAxis.scale(evt.transform.rescaleX(graphFuncs.xScale)));
+    graphFuncs.yG.call(graphFuncs.yAxis.scale(evt.transform.rescaleY(graphFuncs.yScale)));
+    graphFuncs.visual.attr("transform", evt.transform);
   });
-  d3.select("svg").call(zoom);
+  container.call(zoom);
 }
 function addTrips(trips, stop_order, color){
-  graphFuncs.body.selectAll(".line").append("g").attr("class", "line")
+  graphFuncs.visual.selectAll(".line").append("g").attr("class", "line")
       .data(trips.slice(0, 5)).enter().append("path")
       .attr("d", d => graphFuncs.line(d.stop_times))
       .attr("fill", "none").attr("stroke", color).attr("stroke-width", 2);
-  graphFuncs.body.selectAll(".stop-group").data(trips.slice(0, 5)).enter()
+  graphFuncs.visual.selectAll(".stop-group").data(trips.slice(0, 5)).enter()
                  .append("g").attrs({
                   "line-index": (_, i) => i,
                   "line-type": "schedule",
@@ -75,3 +85,6 @@ const chart = {
   initialize: initialize,
   addTrips: addTrips,
 };
+function clamp(a, b, c){
+  return Math.min(Math.max(a, b), c);
+}

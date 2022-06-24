@@ -22,6 +22,7 @@
     <script defer src="d3-chart.js"></script>
   </head>
   <body>
+    <div id="chart"></div>
     <div id="page">
       <div style="width:360px">
         <b-form-select v-model="selectedMode" :options="modes" class="mb-2"></b-form-select>
@@ -31,8 +32,7 @@
         <b-button @click="showRoute">Show Route Info</b-button>  
         <b-button @click="debug">Debug</b-button>  
       </div>
-      <div id="chart"></div>
-      <info-box/>  
+      <!--<info-box/>-->
     </div>
   </body>
 </html>
