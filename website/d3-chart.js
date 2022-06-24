@@ -51,6 +51,9 @@ function initialize(stations, day){
   graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);
 
   let zoom = d3.zoom().on("zoom", function(evt){
+    evt.transform.k = Math.max(evt.transform.k, 1);
+    evt.transform.x = clamp(evt.transform.x, (evt.transform.k - 1) * -(SIZE.width - MARGIN.right), (evt.transform.k - 1) * -MARGIN.left);
+    evt.transform.y = clamp(evt.transform.y, (evt.transform.k - 1) * -(SIZE.height - MARGIN.bottom), (evt.transform.k - 1) * -MARGIN.top);
     graphFuncs.xG.call(graphFuncs.xAxis.scale(evt.transform.rescaleX(graphFuncs.xScale)));
     graphFuncs.yG.call(graphFuncs.yAxis.scale(evt.transform.rescaleY(graphFuncs.yScale)));
     graphFuncs.visual.attr("transform", evt.transform);
@@ -79,6 +82,7 @@ function addTrips(trips, stop_order, color){
                   "cy": d => graphFuncs.yScale(d.shape_dist_traveled),
                   "fill": "blue",
                   "stop-index": (_, i) => i,
+                  "opacity": .5,
                   "r": 10,
                   "class": "stop-point",
                  }).on("mouseover", function(trips, evt){
