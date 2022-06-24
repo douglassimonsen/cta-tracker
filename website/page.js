@@ -5,6 +5,7 @@ const app = new Vue({
     formData: {day: '2022-06-23', direction: 'South'},
     actualData: [],
     scheduleData: null,
+    hoverInfo: {},
 },
   mounted: function(){
     this.selectedDay = formatDate();
@@ -20,16 +21,10 @@ const app = new Vue({
         [this.scheduleData, this.actualData] = data
         const directions = Object.keys(this.scheduleData.stop_order);
         Object.values(this.scheduleData.stop_order).forEach(x => {x.forEach(y => {y['name'] = this.scheduleData.stops[y.stop_id].name})});
-        // chart.initialize(
-        //   this.scheduleData.stop_order[this.selectedDirection || 'South'],
-        //   this.formData.selectedDay,
-        // );
-        // chart.addTrips(this.scheduleData.trips, this.scheduleData.stop_order, "blue");
-        // debugger;
       }.bind(this))
     },
-    debug: function(){
-      debugger;
+    fillInfoBox: function(evt){
+      this.hoverInfo = evt;
     }
   }
 

@@ -25,9 +25,9 @@
   </head>
   <body>
     <div id="page">
-      <chart :schedule="scheduleData" :selected-vals="formData" v-if="scheduleData"></chart>
       <input-form v-model="formData"></input-form>
-      <!--<info-box/>-->
+      <chart :schedule="scheduleData" :selected-vals="formData" v-if="scheduleData" @hover="fillInfoBox"></chart>
+      <info-box :info="hoverInfo"/>
     </div>
   </body>
 </html>

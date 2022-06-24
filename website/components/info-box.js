@@ -1,4 +1,5 @@
 Vue.component('info-box', {
+  props: ['info'],
   template: `
     <div id="info-box">
       <table>
@@ -17,13 +18,21 @@ Vue.component('info-box', {
       </table>
     </div>
   `,
-  data: function(){
-    return {
-      stopName: 'test',
-      stopTime: '12:34:56 PM',
-      diffFromSchedule: '12 mins',
-      headway: '13 mins',
-      tripType: 'Scheduled',
-    }
-  }
-})
+  computed: {
+    stopName: function(){
+      return this.info.stopName || 'Idk';
+    },
+    stopTime: function(){
+      return this.info.stopTime || 'Idk';
+    },
+    diffFromSchedule: function(){
+      return this.info.diffFromSchedule || 'Idk';
+    },
+    headway: function(){
+      return this.info.headway || 'Idk';
+    },
+    tripType: function(){
+      return this.info.tripType || 'Idk';
+    },
+  },
+});

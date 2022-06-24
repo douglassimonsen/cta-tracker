@@ -103,14 +103,17 @@ Vue.component('chart', {
                       let lineIndex = +evt.target.parentElement.getAttribute("line-index");
                       let stopIndex = +evt.target.getAttribute("stop-index");
                       let lineType = evt.target.parentElement.getAttribute("line-type");
-                      sendInfoBox(trips[lineIndex], stopIndex);
-                     }.bind(null, trips))
+                      this.sendInfoBox("Scheduled", trips[lineIndex], stopIndex);
+                     }.bind(this, trips))
     },
-    sendInfoBox: function(tripInfo, stopIndex){
-      return {
-        initialize: initialize,
-        addTrips: addTrips,
-      };
+    sendInfoBox: function(tripType, tripInfo, stopIndex){
+      this.$emit("hover", {
+        stopName: this.stations.find(x => x.stop_id === tripInfo.stop_times[stopIndex].stop_id)?.name,
+        stopTime: tripInfo.stop_times[stopIndex].arrival_time,
+        diffFromSchedule: Math.random() * 10,
+        headway: Math.random() * 10,
+        tripType: tripType,
+      });
     },
-  } 
+  },
 });
