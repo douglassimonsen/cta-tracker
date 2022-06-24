@@ -54,14 +54,21 @@ function initialize(stations, day){
     graphFuncs.xG.call(graphFuncs.xAxis.scale(evt.transform.rescaleX(graphFuncs.xScale)));
     graphFuncs.yG.call(graphFuncs.yAxis.scale(evt.transform.rescaleY(graphFuncs.yScale)));
     graphFuncs.visual.attr("transform", evt.transform);
+    d3.selectAll(".stop-point").attr("r", 10 / evt.transform.k);
+    d3.selectAll(".line").attr("stroke-width", 2 / evt.transform.k);
   });
   container.call(zoom);
 }
 function addTrips(trips, stop_order, color){
-  graphFuncs.visual.selectAll(".line").append("g").attr("class", "line")
+  graphFuncs.visual.selectAll(".line").append("g")
       .data(trips.slice(0, 5)).enter().append("path")
-      .attr("d", d => graphFuncs.line(d.stop_times))
-      .attr("fill", "none").attr("stroke", color).attr("stroke-width", 2);
+      .attrs({
+        "d": d => graphFuncs.line(d.stop_times),
+        "fill": "none",
+        "stroke": color,
+        "stroke-width": 2,
+        "class": "line",
+      });
   graphFuncs.visual.selectAll(".stop-group").data(trips.slice(0, 5)).enter()
                  .append("g").attrs({
                   "line-index": (_, i) => i,
@@ -72,7 +79,8 @@ function addTrips(trips, stop_order, color){
                   "cy": d => graphFuncs.yScale(d.shape_dist_traveled),
                   "fill": "blue",
                   "stop-index": (_, i) => i,
-                  "r": 10
+                  "r": 10,
+                  "class": "stop-point",
                  }).on("mouseover", function(trips, evt){
                   let lineIndex = +evt.target.parentElement.getAttribute("line-index");
                   let stopIndex = +evt.target.getAttribute("stop-index");
