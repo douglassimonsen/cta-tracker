@@ -20,6 +20,9 @@ const graphFuncs = {
   body: null,
   visual: null,
 }
+Vue.component('chart', {
+  template: `<div id="chart"></div>`,
+})
 function initialize(stations, day){
   const container = d3.select("div#chart");
   graphFuncs.body = container.append("svg")

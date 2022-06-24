@@ -1,16 +1,11 @@
 const BASE_URL = "https://cta-bus-and-train-tracker.s3.amazonaws.com"
-new Vue({
+const app = new Vue({
   el: '#page',
   data: {
-    modes: ['bus', 'train'],
-    selectedMode: 'bus',
-    selectedDay: null,
-    routes: ['8'],
-    selectedRoute: '8',
-    selectedDirection: 'South',
+    formData: null,
     actualData: [],
     scheduleData: null,
-  },
+},
   mounted: function(){
     this.selectedDay = formatDate();
     this.getData();
@@ -22,16 +17,14 @@ new Vue({
         ReadCompressed(`${BASE_URL}/schedules/rail/Blue/latest.bz2`),
         ReadCompressed(`${BASE_URL}/traintracker/rollup/2022-06-13.bz2`),
       ]).then(function(data){
-        [schedule, actual] = data
-        const directions = Object.keys(schedule.stop_order);
-        Object.values(schedule.stop_order).forEach(x => {x.forEach(y => {y['name'] = schedule.stops[y.stop_id].name})});
-        this.scheduleData = schedule;
+        [this.scheduleData, this.actualData] = data
+        const directions = Object.keys(this.scheduleData.stop_order);
+        Object.values(this.scheduleData.stop_order).forEach(x => {x.forEach(y => {y['name'] = this.scheduleData.stops[y.stop_id].name})});
         chart.initialize(
-          schedule.stop_order[this.selectedDirection],
+          this.scheduleData.stop_order[this.selectedDirection || 'South'],
           this.selectedDay,
         );
-        chart.addTrips(schedule.trips, schedule.stop_order, "blue");
-        this.trackerData = data;
+        chart.addTrips(this.scheduleData.trips, this.scheduleData.stop_order, "blue");
         // debugger;
       }.bind(this))
     },

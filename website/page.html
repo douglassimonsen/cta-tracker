@@ -18,20 +18,14 @@
 
     <script defer src="dependencies/bzip.js"></script>
     <script defer src="components/info-box.js"></script>
+    <script defer src="components/chart.js"></script>
+    <script defer src="components/input-form.js"></script>
     <script defer src="page.js"></script>
-    <script defer src="d3-chart.js"></script>
   </head>
   <body>
-    <div id="chart"></div>
     <div id="page">
-      <div style="width:360px">
-        <b-form-select v-model="selectedMode" :options="modes" class="mb-2"></b-form-select>
-        <b-form-select v-model="selectedRoute" :options="routes" class="mb-2"></b-form-select>
-        <b-form-datepicker v-model="selectedDay" class="mb-2"></b-form-datepicker>
-        <b-button @click="getData">Download Day's Data</b-button>  
-        <b-button @click="showRoute">Show Route Info</b-button>  
-        <b-button @click="debug">Debug</b-button>  
-      </div>
+      <chart></chart>
+      <input-form v-model="formData"></input-form>
       <!--<info-box/>-->
     </div>
   </body>
