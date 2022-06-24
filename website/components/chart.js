@@ -25,7 +25,7 @@ Vue.component('chart', {
   template: `<div id="chart"></div>`,
   mounted: function(){
     this.initialize();
-    //this.addTrips();
+    this.addTrips(this.schedule.trips, this.stations, "blue");
   },
   computed: {
     stations: function(){
@@ -92,7 +92,7 @@ Vue.component('chart', {
                       "line-type": "schedule",
                      }).selectAll(".stop-point").data(d => d.stop_times).enter()
                      .append("circle").attrs({
-                      "cx": d => graphFuncs.xScale(new Date(graphFuncs.day + 'T' + d.arrival_time)),
+                      "cx": d => graphFuncs.xScale(new Date(this.selectedVals.day + 'T' + d.arrival_time)),
                       "cy": d => graphFuncs.yScale(d.shape_dist_traveled),
                       "fill": "blue",
                       "stop-index": (_, i) => i,
