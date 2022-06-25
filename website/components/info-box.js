@@ -11,8 +11,8 @@ Vue.component('info-box', {
         <tbody>
           <tr><td>Stop</td><td>{{stopName}}</td></tr>
           <tr><td>Time</td><td>{{stopTime}}</td></tr>
-          <tr><td>Difference</td><td>{{diffFromSchedule}}</td></tr>
-          <tr><td>Headway</td><td>{{headway}}</td></tr>
+          <tr><td>Difference</td><td>{{diffFromSchedule}} mins</td></tr>
+          <tr><td>Headway</td><td>{{headway}} mins</td></tr>
           <tr><td>Type</td><td>{{tripType}}</td></tr>
         </tbody>
       </table>
@@ -23,13 +23,13 @@ Vue.component('info-box', {
       return this.info.stopName || 'Idk';
     },
     stopTime: function(){
-      return this.info.stopTime || 'Idk';
+      return formatDt(this.info.stopTime) || 'Idk';
     },
     diffFromSchedule: function(){
-      return this.info.diffFromSchedule || 'Idk';
+      return round(this.info.diffFromSchedule, 3) || 'Idk';
     },
     headway: function(){
-      return this.info.headway || 'Idk';
+      return round(this.info.headway, 3) || 'Idk';
     },
     tripType: function(){
       return this.info.tripType || 'Idk';
