@@ -103,7 +103,7 @@ Vue.component('chart', {
             "stroke-width": 2,
             "class": "line",
           });
-      graphFuncs.visual.selectAll(".stop-group").data(trips.slice(0, 5)).enter()
+      graphFuncs.visual.selectAll(".stop-group").data(trips.slice(0, 25)).enter()
                      .append("g").attrs({
                       "line-index": (_, i) => i,
                       "line-type": "schedule",

@@ -4,6 +4,7 @@
 # security group
 # Nacl
 # add auto shutdown
+from typing import Union
 import boto3
 import logging
 import time
@@ -11,7 +12,7 @@ import os
 import pathlib
 os.chdir(pathlib.Path(__file__).parent)
 cloudformation = boto3.client("cloudformation")
-
+rds = boto3.client("rds")
 
 def check_stack_status(stack_name: str) -> str:
     stacks = cloudformation.list_stacks(
@@ -71,6 +72,19 @@ def build_stack(stack: str) -> None:
     )
 
 
+def get_info(stack: str) -> dict[str, Union[int, str]]:
+    resources = cloudformation.list_stack_resources(StackName=stack)[
+        "StackResourceSummaries"
+    ]    
+    for resource in resources:
+        if resource['ResourceType'] == "AWS::RDS::DBInstance":
+            info = rds.describe_db_instances(DBInstanceIdentifier=resource['PhysicalResourceId'])
+            from pprint import pprint
+            pprint(info['DBInstances'][0]['Endpoint']['Address'])
+            exit()
+
+
 if __name__ == '__main__':
     pass
-    # build_stack("test")
+    # build_stack("test2")
+    get_info("test2")

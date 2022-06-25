@@ -5,10 +5,12 @@ import json
 import csv
 import io
 import bz2
+from pprint import pprint as print
 import os; os.chdir(os.path.dirname(os.path.abspath(__file__)))
 s = requests.session()
 s3 = boto3.client("s3")
 # Retrieved from https://www.transitchicago.com/downloads/sch_data/
+DOW = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
 
 def load_to_s3(data, path):
@@ -66,17 +68,19 @@ def parse_data():
 
     def parse_trips():
         raw_trips = read_csv("trips.txt")
+        route_schedules = parse_route_days()
         trips = {}
         for trip in raw_trips:
+            schedule = route_schedules[trip['service_id']]
+            print(schedule)
+            exit()
             trips.setdefault(trip['route_id'], []).append({
                 k: trip[k] 
-                for k in ['trip_id', 'direction', 'shape_id', 'direction']
+                for k in ['trip_id', 'direction', 'shape_id', 'direction', 'service_id']
             })
         return trips
 
-    def get_trip_info(route):
-        route_trips = trips[route['route_id']]
-
+    def get_trip_info(route, route_trips):
         route_stops = set()
         route_orders = {}
         for trip in route_trips:
@@ -85,6 +89,10 @@ def parse_data():
                 route_orders[trip['direction']] = [{"stop_id": x['stop_id'], 'dist': x['shape_dist_traveled']} for x in trip['stop_times']]
             route_stops.update([x['stop_id'] for x in stop_times[trip['trip_id']]])
         return route_trips, route_stops, route_orders
+
+    def parse_route_days():
+        data = read_csv("calendar.txt")
+        return {row['service_id']: row for row in data}
 
     modes = {
         '3': 'bus',
@@ -101,7 +109,7 @@ def parse_data():
     full_stop_orders = {}
     for route in routes:
         print(route['route_id'])
-        route_trips, route_stops, route_orders = get_trip_info(route)
+        route_trips, route_stops, route_orders = get_trip_info(route, trips[route['route_id']])
         # shape_ids = set(x['shape_id'] for x in route_trips)
         full_stop_orders[route['route_id']] = {
             'orders': route_orders,

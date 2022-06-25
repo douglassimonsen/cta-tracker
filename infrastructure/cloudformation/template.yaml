@@ -5,6 +5,8 @@ Resources:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.10.0.0/16
+      EnableDnsSupport: True
+      EnableDnsHostnames: True
   IGW:
     Type: AWS::EC2::InternetGateway
   IGWAttachment:
@@ -85,7 +87,7 @@ Resources:
       EngineVersion: 14.2
       MasterUsername: postgres
       MasterUserPassword: postgres1
-      # PubliclyAccessible: true
+      PubliclyAccessible: true
   S3BucketAccessGroup:
     Type: AWS::IAM::Group
     Properties:
