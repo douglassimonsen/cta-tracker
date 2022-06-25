@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: An environment to test the upload library
+Resources: 
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.10.0.0/16
+  IGW:
+    Type: AWS::EC2::InternetGateway
+  IGWAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref IGW
+      VpcId: !Ref VPC
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+  ExternalRoute:
+    Type: AWS::EC2::Route
+    DependsOn: IGWAttachment
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+      RouteTableId: !Ref RouteTable
+  Subnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.10.1.0/24
+      VpcId: !Ref VPC
+      AvailabilityZone: us-east-1f
+  SubnetRouteTable1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref Subnet1
+
+  Subnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.10.2.0/24
+      VpcId: !Ref VPC
+      AvailabilityZone: us-east-1e
+  SubnetRouteTable2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref Subnet2
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: CtaTracker 
+      GroupDescription: A security group for the RDS DB
+      VpcId: !Ref VPC
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: -1
+          ToPort: -1
+          IpProtocol: -1
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 5432
+          ToPort: 5432
+          IpProtocol: -1
+  SubNetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: "Needed to map the subnet to the RDS :("
+      SubnetIds:
+        - Ref: Subnet1
+        - Ref: Subnet2
+  DB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      # AssociatedRoles:
+      #     RoleArn: !Ref S3BucketAccessGroup
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+      DBName: CtaTracker
+      DBSubnetGroupName: !Ref SubNetGroup
+      VPCSecurityGroups:
+        - Ref: SecurityGroup
+      Engine: postgres
+      EngineVersion: 14.2
+      MasterUsername: postgres
+      MasterUserPassword: postgres1
+      # PubliclyAccessible: true
+  S3BucketAccessGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      Policies: [{
+        "PolicyName": "S3BucketAccess",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "ObjectPermissions",
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:DeleteObject"
+              ],
+              "Resource": [
+                "arn:aws:s3:::cta-bus-and-train-tracker/*",
+              ]
+            },
+            {
+              "Sid": "BucketPermissions",
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListBucket"
+              ],
+              "Resource": [
+                "arn:aws:s3:::cta-bus-and-train-tracker"
+              ]
+            }
+          ]
+        }
+      }]
+  CtaTracker:
+    Type: AWS::IAM::User
+    Properties:
+      Groups: 
+        - !Ref S3BucketAccessGroup
