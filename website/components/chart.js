@@ -12,9 +12,11 @@ const graphFuncs = {
   yG: null,
   yScale: null,
   yAxis: null,
+  yHover: null,
   xG: null,
   xScale: null,
   xAxis: null,
+  xHover: null,
   daySelected: null,
   line: null,
   body: null,
@@ -25,7 +27,7 @@ Vue.component('chart', {
   template: `<div id="chart"></div>`,
   mounted: function(){
     this.initialize();
-    this.addTrips(this.schedule.trips, this.stations, "blue");
+    this.addTrips(this.schedule.trips, "blue");
   },
   computed: {
     stations: function(){
@@ -59,7 +61,7 @@ Vue.component('chart', {
         new Date(+this.dayParsed - 1000 * 60 * 60 * 3),
         new Date(+this.dayParsed + 1000 * 60 * 60 * 27), // +- 3 hours around the date
       ]).range([MARGIN.left, SIZE.width - MARGIN.right]);
-      graphFuncs.line = d3.line().x(d => graphFuncs.xScale(new Date(this.selectedVals.day + 'T' + d.arrival_time))).y(d => graphFuncs.yScale(d.shape_dist_traveled));
+      graphFuncs.line = d3.line().x(d => graphFuncs.xScale(d.arrival_time)).y(d => graphFuncs.yScale(d.shape_dist_traveled));
       graphFuncs.xG = graphFuncs.body.append("g")
       graphFuncs.xAxis = d3.axisBottom(graphFuncs.xScale);
       graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);
@@ -75,8 +77,22 @@ Vue.component('chart', {
         d3.selectAll(".line").attr("stroke-width", 2 / evt.transform.k);
       });
       container.call(zoom);
+
+      
+      graphFuncs.xHover = graphFuncs.visual.append("path").attrs({
+        'class': 'x-hover line',
+        'stroke': 'black',
+        'stroke-width': 1,
+      });      
+      graphFuncs.yHover = graphFuncs.visual.append("path").attrs({
+        'class': 'y-hover line',
+        'stroke': 'black',
+        'stroke-width': 1,
+      });      
     },
-    addTrips: function(trips, stop_order, color){
+    addTrips: function(trips, color){
+      trips.forEach(y => y.stop_times.forEach(x => x.arrival_time = new Date(this.selectedVals.day + 'T' + x.arrival_time)));
+      debugger;
       graphFuncs.visual.selectAll(".line").append("g")
           .data(trips.slice(0, 5)).enter().append("path")
           .attrs({
@@ -92,7 +108,7 @@ Vue.component('chart', {
                       "line-type": "schedule",
                      }).selectAll(".stop-point").data(d => d.stop_times).enter()
                      .append("circle").attrs({
-                      "cx": d => graphFuncs.xScale(new Date(this.selectedVals.day + 'T' + d.arrival_time)),
+                      "cx": d => graphFuncs.xScale(d.arrival_time),
                       "cy": d => graphFuncs.yScale(d.shape_dist_traveled),
                       "fill": "blue",
                       "stop-index": (_, i) => i,
@@ -102,9 +118,20 @@ Vue.component('chart', {
                      }).on("mouseover", function(trips, evt){
                       let lineIndex = +evt.target.parentElement.getAttribute("line-index");
                       let stopIndex = +evt.target.getAttribute("stop-index");
-                      let lineType = evt.target.parentElement.getAttribute("line-type");
                       this.sendInfoBox("Scheduled", trips[lineIndex], stopIndex);
+                      this.createHoverLines(
+                        trips[lineIndex].stop_times[stopIndex].arrival_time,
+                        +trips[lineIndex].stop_times[stopIndex].shape_dist_traveled,
+                      );
                      }.bind(this, trips))
+    },
+    createHoverLines: function(x, y){
+      graphFuncs.xHover.attr(
+        'd', graphFuncs.line([{arrival_time: x, shape_dist_traveled: graphFuncs.yScale.domain()[0]}, {arrival_time: x, shape_dist_traveled: graphFuncs.yScale.domain()[1]}]),
+      );
+      graphFuncs.yHover.attr(
+        'd', graphFuncs.line([{arrival_time: graphFuncs.xScale.domain()[0], shape_dist_traveled: y}, {arrival_time: graphFuncs.xScale.domain()[1], shape_dist_traveled: y}]),
+      );
     },
     sendInfoBox: function(tripType, tripInfo, stopIndex){
       this.$emit("hover", {
