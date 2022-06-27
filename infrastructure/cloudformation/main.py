@@ -94,7 +94,7 @@ def get_info(stack: str) -> dict[str, Union[int, str]]:
             creds = iam.create_access_key(UserName=resource['PhysicalResourceId'])["AccessKey"]
             ret['user'] = {"access_key": creds["AccessKeyId"], "secret_key": creds["SecretAccessKey"]}
 
-    with open("../env.json", "w") as f:
+    with open("../../env.json", "w") as f:
         json.dump(ret, f, indent=4)
 
 

@@ -7,7 +7,7 @@ import gzip
 import json
 os.chdir(pathlib.Path(__file__).parent)
 s3 = boto3.client("s3")
-envs = json.load(open("../env.json"))
+envs = json.load(open("../../env.json"))
 
 
 def get_conn():
