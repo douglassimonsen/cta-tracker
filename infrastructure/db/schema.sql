@@ -1,3 +1,4 @@
+CREATE extension if not exists aws_s3 CASCADE;
 drop schema if exists cta_tracker cascade;
 create schema cta_tracker;
 create table cta_tracker.calendar (
@@ -27,16 +28,16 @@ create table cta_tracker.routes (
   route_text_color text
 );
 create table cta_tracker.shapes (
-  shape_id int,
+  shape_id text,
   shape_pt_lat float,
   shape_pt_lon float,
   shape_pt_sequence int,
   shape_dist_traveled int
 );
 create table cta_tracker.stop_times (
-  trip_id int,
-  arrival_time time,
-  departure_time time,
+  trip_id text,
+  arrival_time text,
+  departure_time text,
   stop_id int,
   stop_sequence int,
   stop_headsign text,
@@ -55,7 +56,7 @@ create table cta_tracker.stops (
   wheelchair_boarding int
 );
 create table cta_tracker.trips (
-  route_id int,
+  route_id text,
   service_id text,
   trip_id int,
   direction_id int,
