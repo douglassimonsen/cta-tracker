@@ -10,9 +10,11 @@ import logging
 import time
 import os
 import pathlib
+import json
 os.chdir(pathlib.Path(__file__).parent)
 cloudformation = boto3.client("cloudformation")
 rds = boto3.client("rds")
+iam = boto3.client("iam")
 
 def check_stack_status(stack_name: str) -> str:
     stacks = cloudformation.list_stacks(
@@ -56,7 +58,7 @@ def build_stack(stack: str) -> None:
         StackName=stack,
         TemplateBody=open("template.yaml").read(),
         OnFailure="DELETE",
-        Capabilities=["CAPABILITY_IAM"],
+        Capabilities=["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"],
     )
 
     while check_stack_status(stack) == "CREATE_IN_PROGRESS":
@@ -75,16 +77,31 @@ def build_stack(stack: str) -> None:
 def get_info(stack: str) -> dict[str, Union[int, str]]:
     resources = cloudformation.list_stack_resources(StackName=stack)[
         "StackResourceSummaries"
-    ]    
+    ]
+    ret = {}
     for resource in resources:
         if resource['ResourceType'] == "AWS::RDS::DBInstance":
-            info = rds.describe_db_instances(DBInstanceIdentifier=resource['PhysicalResourceId'])
+            info = rds.describe_db_instances(DBInstanceIdentifier=resource['PhysicalResourceId'])['DBInstances'][0]
             from pprint import pprint
-            pprint(info['DBInstances'][0]['Endpoint']['Address'])
-            exit()
+            ret['db'] = {
+                'host': info['Endpoint']['Address'],
+                'port': info['Endpoint']['Port'],
+                'user': info['MasterUsername'],
+                'password': 'postgres1',
+                'dbname': info['DBName']
+            }
+        if resource['ResourceType'] == "AWS::IAM::User":
+            creds = iam.create_access_key(UserName=resource['PhysicalResourceId'])["AccessKey"]
+            ret['user'] = {"access_key": creds["AccessKeyId"], "secret_key": creds["SecretAccessKey"]}
+
+    with open("../env.json", "w") as f:
+        json.dump(ret, f, indent=4)
+
+
+def main(stack: str) -> None:
+    # build_stack(stack)
+    get_info(stack)
 
 
 if __name__ == '__main__':
-    pass
-    # build_stack("test2")
-    get_info("test2")
+    main("test2")

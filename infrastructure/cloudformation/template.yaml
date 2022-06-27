@@ -124,5 +124,6 @@ Resources:
   CtaTracker:
     Type: AWS::IAM::User
     Properties:
+      UserName: CtaTrackerDebugging
       Groups: 
         - !Ref S3BucketAccessGroup
