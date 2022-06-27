@@ -5,7 +5,7 @@ import zipfile
 import io
 import csv
 import boto3
-import bz2
+import gzip
 import json
 os.chdir(pathlib.Path(__file__).parent)
 s3 = boto3.client("s3")
@@ -28,11 +28,12 @@ def gen_schema():
 
 
 def send_to_s3(data, name):
-    # data = bz2.compress(data.encode("utf-8"))
+    data = gzip.compress(data.encode("utf-8"))
     s3.put_object(
         Body=data,
         Bucket='cta-bus-and-train-tracker',
-        Key=f'schedules/raw/{name}.csv',
+        Key=f'schedules/raw/{name}.csv.gzip',
+        ContentEncoding='gzip'
     )
 
 
@@ -52,18 +53,15 @@ def fill_schema():
     ):
         cursor = conn.cursor()
         for name in TABLES:
-            if name in ['calendar', 'calendar_dates', 'routes', 'shapes']:
-                continue
             print(name)
             send_to_s3(zf.read(f"{name}.txt").decode("utf-8"), name)
-            # wish I knew how to copy compressed files to postgres RDS
             cursor.execute(f'''
                 truncate table cta_tracker.{name};
                 SELECT aws_s3.table_import_from_s3(
                     'cta_tracker.{name}', 
                     '', 
                     '(format csv, header true, DELIMITER '','', QUOTE ''"'', ESCAPE ''\\'')',
-                    '(cta-bus-and-train-tracker,schedules/raw/{name}.csv,us-east-1)', 
+                    '(cta-bus-and-train-tracker,schedules/raw/{name}.csv.gzip,us-east-1)', 
                     aws_commons.create_aws_credentials('{envs['user']['access_key']}', '{envs['user']['secret_key']}', '')
                 );
             ''')

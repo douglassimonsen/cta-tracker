@@ -58,11 +58,11 @@ create table cta_tracker.stops (
 create table cta_tracker.trips (
   route_id text,
   service_id text,
-  trip_id int,
+  trip_id text,
   direction_id int,
-  block_id int,
-  shape_id int,
+  block_id bigint,
+  shape_id text,
   direction text,
   wheelchair_accessible int,
-  schd_trip_id int
+  schd_trip_id text
 );
