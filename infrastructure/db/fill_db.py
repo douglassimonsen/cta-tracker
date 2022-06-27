@@ -2,8 +2,6 @@ import psycopg2
 import os
 import pathlib
 import zipfile
-import io
-import csv
 import boto3
 import gzip
 import json
