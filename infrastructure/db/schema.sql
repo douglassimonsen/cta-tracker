@@ -32,7 +32,7 @@ create table cta_tracker.shapes (
   shape_pt_lat float,
   shape_pt_lon float,
   shape_pt_sequence int,
-  shape_dist_traveled int
+  shape_dist_traveled float
 );
 create table cta_tracker.stop_times (
   trip_id text,
