@@ -11,6 +11,7 @@ os.chdir(pathlib.Path(__file__).parent)
 s3 = boto3.client("s3")
 envs = json.load(open("../env.json"))
 
+
 def get_conn():
     return psycopg2.connect(
         **envs['db']
@@ -37,15 +38,7 @@ def send_to_s3(data, name):
     )
 
 
-
 def fill_schema():
-    def read_csv(source):
-        source_data = zf.read(f"{source}.txt").decode("utf-8")
-        routes_raw = io.StringIO()
-        routes_raw.write(source_data)
-        routes_raw.seek(0)
-        return list(csv.DictReader(routes_raw))
-
     TABLES = ['calendar', 'calendar_dates', 'routes', 'shapes', 'stop_times', 'stops', 'trips']
     with (
         zipfile.ZipFile("sched.zip") as zf,
