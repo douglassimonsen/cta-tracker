@@ -6,7 +6,7 @@ const app = new Vue({
     actualData: [],
     scheduleData: null,
     hoverInfo: {},
-},
+  },
   mounted: function(){
     this.selectedDay = formatDate();
     this.getData();
@@ -14,10 +14,12 @@ const app = new Vue({
   methods: {
     showRoute: function(){},
     getData: function(){
+      return;
       Promise.all([
         ReadCompressed(`${BASE_URL}/schedules/rail/Blue/latest.bz2`),
         ReadCompressed(`${BASE_URL}/traintracker/rollup/2022-06-13.bz2`),
       ]).then(function(data){
+        return;
         [this.scheduleData, this.actualData] = data
         const directions = Object.keys(this.scheduleData.stop_order);
         Object.values(this.scheduleData.stop_order).forEach(x => {x.forEach(y => {y['name'] = this.scheduleData.stops[y.stop_id].name})});

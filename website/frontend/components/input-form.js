@@ -2,7 +2,8 @@ Vue.component('input-form', {
   template: `
   <div style="width:360px">
     <b-form-select v-model="selectedMode" :options="modes" class="mb-2"></b-form-select>
-    <b-form-select v-model="selectedRoute" :options="routes" class="mb-2"></b-form-select>
+    <b-form-select v-model="selectedRoute" :options="availableRoutes" class="mb-2" :disabled="selectedMode === ''"></b-form-select>
+    <b-form-select v-model="selectedDirection" :options="availableDirections" class="mb-2" :disabled="selectedRoute === ''"></b-form-select>
     <b-form-datepicker v-model="selectedDay" class="mb-2"></b-form-datepicker>
     <b-button @click="sendEvent('data')">Download Day's Data (Raw)</b-button>  
     <b-button @click="sendEvent('chart')">Show Route Info</b-button>  
@@ -10,15 +11,35 @@ Vue.component('input-form', {
   `,
   data: function(){
     return {
-      modes: ['bus', 'train'],
-      selectedMode: 'bus',
+      rawData: [],
+      modes: ['Bus', 'Rail'],
+      selectedMode: '',
       selectedDay: '2020-10-10',
-      routes: ['8'],
-      selectedRoute: '8',
-      selectedDirection: 'South',
+      selectedRoute: '',
+      selectedDirection: '',
     }
   },
+  mounted: function(){
+    this.getData();
+  },
+  computed: {
+    availableRoutes: function(){
+      let routes = this.rawData.filter(x => x.mode == this.selectedMode).map(x => x.route_id);
+      routes = [...new Set(routes)].sort(function(a, b){
+        return a.padStart(b.length, ' ') > b.padStart(a.length, ' ') ? 1 : -1;
+      });
+      return routes;
+    },
+    availableDirections: function(){
+      return this.rawData.filter(x => x.route_id === this.selectedRoute).map(x => x.direction);
+    },
+  },
   methods: {
+    getData: function(){
+      axios.get('http://127.0.0.1:5000/api/routes', {}, {headers: {'Access-Control-Allow-Origin': "*"}}).then(function(response){
+         this.rawData = response.data;
+      }.bind(this));
+    },
     sendEvent: function(evt){
       this.$emit('input', {
         route: this.route,
