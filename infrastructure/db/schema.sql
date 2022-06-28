@@ -53,8 +53,8 @@ create table cta_tracker.shapes (
 );
 create table cta_tracker.stop_times (
   trip_id text,
-  arrival_time text,
-  departure_time text,
+  arrival_time interval, -- you'd think this was a time, but the bus leaving at 27 o'clock begs to disagree
+  departure_time interval,
   stop_id int,
   stop_sequence int,
   stop_headsign text,

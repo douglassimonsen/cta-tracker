@@ -2,7 +2,6 @@ const BASE_URL = "https://cta-bus-and-train-tracker.s3.amazonaws.com"
 const app = new Vue({
   el: '#page',
   data: {
-    formData: {day: '2022-06-23', direction: 'South'},
     actualData: [],
     scheduleData: null,
     hoverInfo: {},
@@ -12,7 +11,17 @@ const app = new Vue({
     this.getData();
   },
   methods: {
-    showRoute: function(){},
+    showRoute: function(evt){
+      axios.post('http://127.0.0.1:5000/api/schedule', {
+        route: evt.route,
+        date: evt.date,
+        direction: evt.direction,
+      },
+      {headers: {'Access-Control-Allow-Origin': '*'}},
+      ).then(function(response){
+        debugger;
+      }.bind(this));
+    },
     getData: function(){
       return;
       Promise.all([

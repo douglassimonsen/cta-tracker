@@ -13,10 +13,10 @@ Vue.component('input-form', {
     return {
       rawData: [],
       modes: ['Bus', 'Rail'],
-      selectedMode: '',
-      selectedDay: '2020-10-10',
-      selectedRoute: '',
-      selectedDirection: '',
+      selectedMode: 'Bus',
+      selectedDay: '2022-06-23',
+      selectedRoute: '8',
+      selectedDirection: 'South',
     }
   },
   mounted: function(){
@@ -42,10 +42,10 @@ Vue.component('input-form', {
     },
     sendEvent: function(evt){
       this.$emit('input', {
-        route: this.route,
-        mode: this.mode,
-        direction: this.direction,
-        day: this.selectedDay,
+        route: this.selectedRoute,
+        mode: this.selectedMode,
+        direction: this.selectedDirection,
+        date: this.selectedDay,
         event: evt,
       });
     },

@@ -99,7 +99,7 @@ def get_info(stack: str) -> dict[str, Union[int, str]]:
 
 
 def main(stack: str) -> None:
-    # build_stack(stack)
+    build_stack(stack)
     get_info(stack)
 
 
