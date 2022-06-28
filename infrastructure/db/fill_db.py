@@ -57,6 +57,8 @@ def fill_schema():
                 );
             ''')
             conn.commit()
+        print("Refreshing trip_options")
+        cursor.execute("refresh materialized view cta_tracker.trip_options")
 
 
 def main():

@@ -1,8 +1,7 @@
 select '{date}'::date + st.arrival_time as arrival_time,
        st.trip_id,
        st.stop_id,
-       st.stop_sequence,
-       st.shape_dist_traveled
+       st.stop_sequence
 from cta_tracker.trips t 
 
 left join cta_tracker.calendar c 
@@ -23,3 +22,4 @@ and (
 	date_part('dow', '{date}'::date) = 6 and c.saturday is true
 )
 and direction = '{direction}'
+order by st.trip_id, st.stop_sequence

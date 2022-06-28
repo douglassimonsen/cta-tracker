@@ -74,6 +74,9 @@ create table cta_tracker.stops (
 );
 create table cta_tracker.trips (
   route_id text,
+  mode text generated always as (
+    case when route_id in ('Blue', 'Brn', 'G', 'Org', 'P', 'Pink', 'Red', 'Y') then 'Rail' else 'Bus' end
+  ) stored,
   service_id text,
   trip_id text,
   direction_id int,
@@ -83,3 +86,15 @@ create table cta_tracker.trips (
   wheelchair_accessible int,
   schd_trip_id text
 );
+
+create materialized view cta_tracker.trip_options as (
+	select distinct t.route_id, 
+	    t.direction,
+	    t.mode,
+	    st.stop_id,
+	    st.stop_sequence
+	from cta_tracker.trips t
+	
+	left join cta_tracker.stop_times st 
+	on st.trip_id = t.trip_id
+)
