@@ -94,7 +94,7 @@ Vue.component('chart', {
     },
     addTrips: function(trips, color){
       graphFuncs.visual.selectAll(".line").append("g")
-          .data(trips.slice(0, 5)).enter().append("path")
+          .data(trips).enter().append("path")
           .attrs({
             "d": d => graphFuncs.line(d),
             "fill": "none",
@@ -102,7 +102,7 @@ Vue.component('chart', {
             "stroke-width": 2,
             "class": "line",
           });
-      graphFuncs.visual.selectAll(".stop-group").data(trips.slice(0, 25)).enter()
+      graphFuncs.visual.selectAll(".stop-group").data(trips).enter()
                      .append("g").attrs({
                       "line-index": (_, i) => i,
                       "line-type": "schedule",
@@ -120,8 +120,8 @@ Vue.component('chart', {
                       let stopIndex = +evt.target.getAttribute("stop-index");
                       this.sendInfoBox("Scheduled", trips[lineIndex], stopIndex);
                       this.createHoverLines(
-                        trips[lineIndex].stop_times[stopIndex].arrival_time,
-                        +trips[lineIndex].stop_times[stopIndex].shape_dist_traveled,
+                        trips[lineIndex][stopIndex].arrival_time,
+                        +trips[lineIndex][stopIndex].shape_dist_traveled,
                       );
                      }.bind(this, trips)).on("mouseout", function(){
                       graphFuncs.xHover.attr("opacity", 0);
@@ -140,8 +140,8 @@ Vue.component('chart', {
     },
     sendInfoBox: function(tripType, tripInfo, stopIndex){
       this.$emit("hover", {
-        stopName: this.stopOrder.find(x => x.stop_id === tripInfo.stop_times[stopIndex].stop_id)?.name,
-        stopTime: tripInfo.stop_times[stopIndex].arrival_time,
+        stopName: this.stopOrder.find(x => x.stop_id === tripInfo[stopIndex].stop_id)?.stop_name,
+        stopTime: tripInfo[stopIndex].arrival_time,
         diffFromSchedule: Math.random() * 10,
         headway: Math.random() * 10,
         tripType: tripType,

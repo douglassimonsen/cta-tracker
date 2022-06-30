@@ -26,14 +26,17 @@ const app = new Vue({
       },
       {headers: {'Access-Control-Allow-Origin': '*'}},
       ).then(function(response){
-        console.log(this.stopDistance);
-        Object.values(response.data).forEach(trip => {
+        this.scheduleStops = Object.fromEntries(Object.entries(response.data).map(trip_info => {
+          [trip_id, trip] = trip_info;
           trip.forEach(stop => {
             stop.arrival_time = new Date(stop.arrival_time);  // casting to actual dates
             stop.shape_dist_traveled = this.stopDistance[stop.stop_id];
           });
-        });
-        this.scheduleStops = response.data;
+          return [
+            trip_id,
+            trip.filter(x => x.shape_dist_traveled !== undefined),
+          ]
+        }));
       }.bind(this));
     },
     getStopOrder: function(){
@@ -52,16 +55,6 @@ const app = new Vue({
         this.getSchedule(),
         this.getStopOrder(),
       ]).then(() => this.showChart = true);
-      return;
-      Promise.all([
-        ReadCompressed(`${BASE_URL}/schedules/rail/Blue/latest.bz2`),
-        ReadCompressed(`${BASE_URL}/traintracker/rollup/2022-06-13.bz2`),
-      ]).then(function(data){
-        return;
-        [this.scheduleData, this.actualData] = data
-        const directions = Object.keys(this.scheduleData.stop_order);
-        Object.values(this.scheduleData.stop_order).forEach(x => {x.forEach(y => {y['name'] = this.scheduleData.stops[y.stop_id].name})});
-      }.bind(this))
     },
     fillInfoBox: function(evt){
       this.hoverInfo = evt;
