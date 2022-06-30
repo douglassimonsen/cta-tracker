@@ -5,8 +5,8 @@ import datetime
 class CustomJSONEncoder(flask.json.JSONEncoder):
     def default(self, obj):
         try:
-            if isinstance(obj, datetime):
-                return obj.strftime("%Y-%m-%d %H:%M:%S")
+            if isinstance(obj, datetime.datetime):
+                return obj.strftime("%Y-%m-%dT%H:%M:%S")
             iterable = iter(obj)
         except TypeError:
             pass

@@ -25,4 +25,7 @@ def api_stops():
     args = flask.request.get_json()
     with utils.get_conn() as conn:
         data = utils.run_query(conn, query_dict['schedule'].format(**args))
-    return flask.jsonify(data)
+    ret = {}
+    for row in data:  # we're allowed to not sort here because stop_sequence is in the order by of the query
+        ret.setdefault(row['trip_id'], []).append({'arrival_time': row['arrival_time'], 'stop_id': row['stop_id']})
+    return flask.jsonify(ret)

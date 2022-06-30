@@ -23,16 +23,15 @@ const graphFuncs = {
   visual: null,
 }
 Vue.component('chart', {
-  props: ["scheduleStops", "stopOrder"],
+  props: ["scheduleStops", "stopOrder", "selectedDay"],
   template: `<div id="chart"></div>`,
   mounted: function(){
     this.initialize();
-    return;
-    this.addTrips(this.schedule.trips, "blue");
+    this.addTrips(this.scheduleStops, "blue");
   },
   computed: {
     dayParsed: function(){
-      return new Date('1994-08-25T00:00:00');
+      return new Date(this.selectedDay + 'T00:00:00');
     },
   },
   methods: {
@@ -45,11 +44,11 @@ Vue.component('chart', {
           .style("background-color", "aliceblue")
           .style("margin", "20px").append("g");
       graphFuncs.visual = graphFuncs.body.append("g");
-      MARGIN.left = 20 + this.stations.reduce((a, b) => Math.max(a, b.name.length * 4.4), 0);
-      graphFuncs.yScale = d3.scaleLinear().domain(d3.extent(this.stations, d => +d.dist)).range([SIZE.height - MARGIN.bottom, MARGIN.top]);
+      MARGIN.left = 20 + this.stopOrder.reduce((a, b) => Math.max(a, b.stop_name.length * 4.4), 0);
+      graphFuncs.yScale = d3.scaleLinear().domain(d3.extent(this.stopOrder, d => +d.shape_dist_traveled)).range([SIZE.height - MARGIN.bottom, MARGIN.top]);
       graphFuncs.yAxis = d3.axisLeft(graphFuncs.yScale)
-                           .tickValues(this.stations.map(x => x.dist))
-                           .tickFormat((d, i) => this.stations[i].name);
+                           .tickValues(this.stopOrder.map(x => x.shape_dist_traveled))
+                           .tickFormat((d, i) => this.stopOrder[i].stop_name);
       graphFuncs.yG = graphFuncs.body.append("g");
       graphFuncs.yG.attr("class", "y-axis")
                 .attr("transform", `translate(${MARGIN.left}, 0)`)
@@ -91,7 +90,8 @@ Vue.component('chart', {
       });      
     },
     addTrips: function(trips, color){
-      trips.forEach(y => y.stop_times.forEach(x => x.arrival_time = new Date('1994-08-25T' + x.arrival_time)));
+      trips = Object.values(trips);
+      debugger;
       graphFuncs.visual.selectAll(".line").append("g")
           .data(trips.slice(0, 5)).enter().append("path")
           .attrs({
@@ -139,7 +139,7 @@ Vue.component('chart', {
     },
     sendInfoBox: function(tripType, tripInfo, stopIndex){
       this.$emit("hover", {
-        stopName: this.stations.find(x => x.stop_id === tripInfo.stop_times[stopIndex].stop_id)?.name,
+        stopName: this.stopOrder.find(x => x.stop_id === tripInfo.stop_times[stopIndex].stop_id)?.name,
         stopTime: tripInfo.stop_times[stopIndex].arrival_time,
         diffFromSchedule: Math.random() * 10,
         headway: Math.random() * 10,

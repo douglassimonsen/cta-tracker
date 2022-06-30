@@ -12,20 +12,32 @@ const app = new Vue({
   mounted: function(){
     this.selectedDay = formatDate();
   },
+  computed: {
+    stopDistance: function(){
+      return Object.fromEntries(this.stopOrder.map(x => [x.stop_id, x.shape_dist_traveled]));
+    },
+  },
   methods: {
     getSchedule: function(){
-      axios.post('http://127.0.0.1:5000/api/schedule', {
+      return axios.post('http://127.0.0.1:5000/api/schedule', {
         route: this.formVals.route,
         date: this.formVals.date,
         direction: this.formVals.direction,
       },
       {headers: {'Access-Control-Allow-Origin': '*'}},
       ).then(function(response){
+        console.log(this.stopDistance);
+        Object.values(response.data).forEach(trip => {
+          trip.forEach(stop => {
+            stop.arrival_time = new Date(stop.arrival_time);  // casting to actual dates
+            stop.shape_dist_traveled = this.stopDistance[stop.stop_id];
+          });
+        });
         this.scheduleStops = response.data;
       }.bind(this));
     },
     getStopOrder: function(){
-      axios.post('http://127.0.0.1:5000/api/stop_order', {
+      return axios.post('http://127.0.0.1:5000/api/stop_order', {
         route: this.formVals.route,
         direction: this.formVals.direction,
       },
