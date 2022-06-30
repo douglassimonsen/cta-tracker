@@ -27,12 +27,15 @@ Vue.component('chart', {
   template: `<div id="chart"></div>`,
   mounted: function(){
     this.initialize();
-    this.addTrips(this.scheduleStops, "blue");
+    this.addTrips(this.scheduleList, "blue");
   },
   computed: {
     dayParsed: function(){
       return new Date(this.selectedDay + 'T00:00:00');
     },
+    scheduleList: function(){
+      return Object.values(this.scheduleStops);
+    }
   },
   methods: {
     initialize: function(){
@@ -90,12 +93,10 @@ Vue.component('chart', {
       });      
     },
     addTrips: function(trips, color){
-      trips = Object.values(trips);
-      debugger;
       graphFuncs.visual.selectAll(".line").append("g")
           .data(trips.slice(0, 5)).enter().append("path")
           .attrs({
-            "d": d => graphFuncs.line(d.stop_times),
+            "d": d => graphFuncs.line(d),
             "fill": "none",
             "stroke": color,
             "stroke-width": 2,
@@ -105,14 +106,14 @@ Vue.component('chart', {
                      .append("g").attrs({
                       "line-index": (_, i) => i,
                       "line-type": "schedule",
-                     }).selectAll(".stop-point").data(d => d.stop_times).enter()
+                     }).selectAll(".stop-point").data(d => d).enter()
                      .append("circle").attrs({
                       "cx": d => graphFuncs.xScale(d.arrival_time),
                       "cy": d => graphFuncs.yScale(d.shape_dist_traveled),
                       "fill": "blue",
                       "stop-index": (_, i) => i,
                       "opacity": .5,
-                      "r": 10,
+                      "r": 7,
                       "class": "stop-point",
                      }).on("mouseover", function(trips, evt){
                       let lineIndex = +evt.target.parentElement.getAttribute("line-index");
