@@ -23,18 +23,16 @@ const graphFuncs = {
   visual: null,
 }
 Vue.component('chart', {
-  props: ["schedule", "selectedVals"],
+  props: ["scheduleStops", "stopOrder"],
   template: `<div id="chart"></div>`,
   mounted: function(){
     this.initialize();
+    return;
     this.addTrips(this.schedule.trips, "blue");
   },
   computed: {
-    stations: function(){
-      return this.schedule.stop_order[this.selectedVals.direction];
-    },
     dayParsed: function(){
-      return new Date(this.selectedVals.day + 'T00:00:00');
+      return new Date('1994-08-25T00:00:00');
     },
   },
   methods: {
@@ -93,7 +91,7 @@ Vue.component('chart', {
       });      
     },
     addTrips: function(trips, color){
-      trips.forEach(y => y.stop_times.forEach(x => x.arrival_time = new Date(this.selectedVals.day + 'T' + x.arrival_time)));
+      trips.forEach(y => y.stop_times.forEach(x => x.arrival_time = new Date('1994-08-25T' + x.arrival_time)));
       graphFuncs.visual.selectAll(".line").append("g")
           .data(trips.slice(0, 5)).enter().append("path")
           .attrs({

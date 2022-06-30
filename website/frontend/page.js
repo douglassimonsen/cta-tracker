@@ -4,9 +4,10 @@ const app = new Vue({
   data: {
     formVals: {},
     actualData: [],
-    scheduleData: [],
-    stops: [],
+    scheduleStops: [],
+    stopOrder: [],
     hoverInfo: {},
+    showChart: false,
   },
   mounted: function(){
     this.selectedDay = formatDate();
@@ -20,7 +21,7 @@ const app = new Vue({
       },
       {headers: {'Access-Control-Allow-Origin': '*'}},
       ).then(function(response){
-        debugger;
+        this.scheduleStops = response.data;
       }.bind(this));
     },
     getStopOrder: function(){
@@ -30,13 +31,15 @@ const app = new Vue({
       },
       {headers: {'Access-Control-Allow-Origin': '*'}},
       ).then(function(response){
-        this.stops = response.data;
+        this.stopOrder = response.data;
       }.bind(this));
     },
     getData: function(evt){
       this.formVals = evt;
-      this.getSchedule();
-      this.getStopOrder();
+      Promise.all([
+        this.getSchedule(),
+        this.getStopOrder(),
+      ]).then(() => this.showChart = true);
       return;
       Promise.all([
         ReadCompressed(`${BASE_URL}/schedules/rail/Blue/latest.bz2`),
