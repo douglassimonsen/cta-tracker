@@ -25,6 +25,12 @@ const graphFuncs = {
 Vue.component('chart', {
   props: ["scheduleStops", "stopOrder", "selectedDay"],
   template: `<div id="chart"></div>`,
+  data: function(){
+    return {
+      drag: {},
+      dragRect: null,
+    };
+  },
   mounted: function(){
     this.initialize();
     this.addTrips(this.scheduleList, "blue");
@@ -46,7 +52,7 @@ Vue.component('chart', {
           .attr("height", SIZE.height)
           .style("background-color", "aliceblue")
           .style("margin", "20px").append("g");
-      graphFuncs.visual = graphFuncs.body.append("g");
+      graphFuncs.visual = graphFuncs.body.append("g").attr("z-index", 1);
       MARGIN.left = 20 + this.stopOrder.reduce((a, b) => Math.max(a, b.stop_name.length * 4.4), 0);
       graphFuncs.yScale = d3.scaleLinear().domain(d3.extent(this.stopOrder, d => +d.shape_dist_traveled)).range([SIZE.height - MARGIN.bottom, MARGIN.top]);
       graphFuncs.yAxis = d3.axisLeft(graphFuncs.yScale)
@@ -66,17 +72,36 @@ Vue.component('chart', {
       graphFuncs.xAxis = d3.axisBottom(graphFuncs.xScale);
       graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);
     
-      let zoom = d3.zoom().on("zoom", function(evt){
-        evt.transform.k = Math.max(evt.transform.k, 1);
-        evt.transform.x = clamp(evt.transform.x, (evt.transform.k - 1) * -(SIZE.width - MARGIN.right), (evt.transform.k - 1) * -MARGIN.left);
-        evt.transform.y = clamp(evt.transform.y, (evt.transform.k - 1) * -(SIZE.height - MARGIN.bottom), (evt.transform.k - 1) * -MARGIN.top);
-        graphFuncs.xG.call(graphFuncs.xAxis.scale(evt.transform.rescaleX(graphFuncs.xScale)));
-        graphFuncs.yG.call(graphFuncs.yAxis.scale(evt.transform.rescaleY(graphFuncs.yScale)));
-        graphFuncs.visual.attr("transform", evt.transform);
-        d3.selectAll(".stop-point").attr("r", 10 / evt.transform.k);
-        d3.selectAll(".line").attr("stroke-width", 2 / evt.transform.k);
-      });
-      container.call(zoom);
+      function dragMove(evt){
+        let left = Math.min(evt.x, this.drag.startX);
+        let right = Math.max(evt.x, this.drag.startX);
+        let top = Math.min(evt.y, this.drag.startY);
+        let bottom = Math.max(evt.y, this.drag.startY);
+        this.dragRect.attrs({
+          stroke: '#000000',
+          'stroke-width': '1.5px',
+          fill: '#ffffff',
+          'fill-opacity': 0.5,
+          x: left,
+          y: top,
+          width: (right - left),
+          height: (bottom - top),
+        });
+      }
+      function dragStart(evt){
+        this.drag.startX = evt.x;
+        this.drag.startY = evt.y;
+        this.dragRect = graphFuncs.visual.append("rect");
+      }
+      function dragEnd(evt){
+        this.drag.endX = evt.x;
+        this.drag.endY = evt.y;
+        this.dragRect.remove();
+      }
+      container.call(d3.drag()
+      .on("drag", dragMove.bind(this))
+      .on("start", dragStart.bind(this))
+      .on("end", dragEnd.bind(this)))
 
       
       graphFuncs.xHover = graphFuncs.visual.append("path").attrs({
