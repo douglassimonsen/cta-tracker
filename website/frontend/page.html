@@ -25,8 +25,8 @@
   </head>
   <body>
     <div id="page">
-      <input-form @input="showRoute"></input-form>
-      <chart :schedule="scheduleData" :selected-vals="formData" v-if="scheduleData" @hover="fillInfoBox"></chart>
+      <input-form @input="getData"></input-form>
+      <!-- <chart :schedule="scheduleData" :selected-vals="formData" v-if="scheduleData" @hover="fillInfoBox"></chart> -->
       <info-box :info="hoverInfo"/>
     </div>
   </body>

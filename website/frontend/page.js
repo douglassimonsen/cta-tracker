@@ -2,27 +2,41 @@ const BASE_URL = "https://cta-bus-and-train-tracker.s3.amazonaws.com"
 const app = new Vue({
   el: '#page',
   data: {
+    formVals: {},
     actualData: [],
-    scheduleData: null,
+    scheduleData: [],
+    stops: [],
     hoverInfo: {},
   },
   mounted: function(){
     this.selectedDay = formatDate();
-    this.getData();
   },
   methods: {
-    showRoute: function(evt){
+    getSchedule: function(){
       axios.post('http://127.0.0.1:5000/api/schedule', {
-        route: evt.route,
-        date: evt.date,
-        direction: evt.direction,
+        route: this.formVals.route,
+        date: this.formVals.date,
+        direction: this.formVals.direction,
       },
       {headers: {'Access-Control-Allow-Origin': '*'}},
       ).then(function(response){
         debugger;
       }.bind(this));
     },
-    getData: function(){
+    getStopOrder: function(){
+      axios.post('http://127.0.0.1:5000/api/stop_order', {
+        route: this.formVals.route,
+        direction: this.formVals.direction,
+      },
+      {headers: {'Access-Control-Allow-Origin': '*'}},
+      ).then(function(response){
+        this.stops = response.data;
+      }.bind(this));
+    },
+    getData: function(evt){
+      this.formVals = evt;
+      this.getSchedule();
+      this.getStopOrder();
       return;
       Promise.all([
         ReadCompressed(`${BASE_URL}/schedules/rail/Blue/latest.bz2`),

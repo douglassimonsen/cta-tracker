@@ -61,6 +61,8 @@ create table cta_tracker.stop_times (
   pickup_type int,
   shape_dist_traveled int
 );
+create index stop_times_trip_id on cta_tracker.stop_times(trip_id);
+
 create table cta_tracker.stops (
   stop_id int,
   stop_code int,
@@ -86,15 +88,30 @@ create table cta_tracker.trips (
   wheelchair_accessible int,
   schd_trip_id text
 );
-
-create materialized view cta_tracker.trip_options as (
-	select distinct t.route_id, 
-	    t.direction,
-	    t.mode,
-	    st.stop_id,
-	    st.stop_sequence
-	from cta_tracker.trips t
-	
-	left join cta_tracker.stop_times st 
-	on st.trip_id = t.trip_id
+create materialized view cta_tracker.scheduled_stops as (
+	with base as (
+		select t.route_id, 
+		       t.direction, 
+		       t.trip_id, 
+		       count(*) as cnt
+		from cta_tracker.trips t 
+		left join cta_tracker.stop_times st 
+		on t.trip_id = st.trip_id 
+		group by t.route_id, t.direction, t.trip_id
+	), base2 as (
+		select distinct on(route_id, direction) route_id, 
+		       direction,
+		       trip_id 
+		from base
+		order by route_id, direction, cnt desc
+	)
+	select base2.route_id, 
+	       base2.direction,
+	       st.trip_id,
+	       st.stop_id,
+	       st.stop_sequence,
+	       st.shape_dist_traveled 
+	from base2
+	left join cta_tracker.stop_times st
+	on base2.trip_id = st.trip_id
 )
