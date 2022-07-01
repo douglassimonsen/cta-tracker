@@ -91,24 +91,29 @@ Vue.component('chart', {
       MARGIN.left = 20 + this.stopOrder.reduce((a, b) => Math.max(a, b.stop_name.length * 4.4), 0);
       if(graphFuncs.yScale === null){
         graphFuncs.yScale = d3.scaleLinear().domain(d3.extent(this.stopOrder, d => +d.shape_dist_traveled)).range([SIZE.height - MARGIN.bottom, MARGIN.top]);
-        graphFuncs.yAxis = d3.axisLeft(graphFuncs.yScale)
-                             .tickValues(this.stopOrder.map(x => x.shape_dist_traveled))
-                             .tickFormat((_, i) => this.stopOrder[i].stop_name);
-        graphFuncs.yG = graphFuncs.body.append("g");
-        graphFuncs.yG.attr("class", "y-axis")
-                  .attr("transform", `translate(${MARGIN.left}, 0)`)
-                  .call(graphFuncs.yAxis);        
       }
+      else {
+        graphFuncs.yG.remove();
+      }
+      graphFuncs.yAxis = d3.axisLeft(graphFuncs.yScale)
+                            .tickValues(this.stopOrder.map(x => x.shape_dist_traveled))
+                            .tickFormat((_, i) => this.stopOrder[i].stop_name);
+      graphFuncs.yG = graphFuncs.body.append("g");
+      graphFuncs.yG.attr("class", "y-axis")
+                .attr("transform", `translate(${MARGIN.left}, 0)`)
+                .call(graphFuncs.yAxis);        
       if(graphFuncs.xScale === null){
         graphFuncs.xScale = d3.scaleTime().domain([
           new Date(+this.dayParsed - 1000 * 60 * 60 * 3),
           new Date(+this.dayParsed + 1000 * 60 * 60 * 27), // +- 3 hours around the date
         ]).range([MARGIN.left, SIZE.width - MARGIN.right]);
-        graphFuncs.line = d3.line().x(d => graphFuncs.xScale(d.arrival_time)).y(d => graphFuncs.yScale(d.shape_dist_traveled));
-        graphFuncs.xG = graphFuncs.body.append("g")
-        graphFuncs.xAxis = d3.axisBottom(graphFuncs.xScale);
-        graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);  
-      }   
+      } else {
+        graphFuncs.xG.remove();
+      }
+      graphFuncs.line = d3.line().x(d => graphFuncs.xScale(d.arrival_time)).y(d => graphFuncs.yScale(d.shape_dist_traveled));
+      graphFuncs.xG = graphFuncs.body.append("g").attr("class", "x-axis");
+      graphFuncs.xAxis = d3.axisBottom(graphFuncs.xScale);
+      graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);  
     },
     buttonZoom(times){
       this.zoom({
@@ -123,11 +128,14 @@ Vue.component('chart', {
       if(bounds.bottom !== undefined && bounds.top !== undefined){
         graphFuncs.yScale.domain([bounds.bottom, bounds.top]);  // Although the range is flipped, the domain is still normal
       }
+      this.dragRect.remove();
+      graphFuncs.body.selectAll(".line").remove();
+      graphFuncs.body.selectAll(".stop-group").remove();
       this.generateGraphObjs();
       this.addTrips(this.scheduleList, "blue");
     },
     addTrips: function(trips, color){
-      graphFuncs.visual.selectAll(".line").append("g")
+      graphFuncs.visual.selectAll(".line").append("g").attr("class", "line")
           .data(trips).enter().append("path")
           .attrs({
             "d": d => graphFuncs.line(d),
@@ -140,6 +148,7 @@ Vue.component('chart', {
                      .append("g").attrs({
                       "line-index": (_, i) => i,
                       "line-type": "schedule",
+                      "class": "stop-group",
                      }).selectAll(".stop-point").data(d => d).enter()
                      .append("circle").attrs({
                       "cx": d => graphFuncs.xScale(d.arrival_time),
