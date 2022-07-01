@@ -99,9 +99,15 @@ Vue.component('chart', {
                             .tickValues(this.stopOrder.map(x => x.shape_dist_traveled))
                             .tickFormat((_, i) => this.stopOrder[i].stop_name);
       graphFuncs.yG = graphFuncs.body.append("g");
+      graphFuncs.yG.append("rect").attrs({
+        height: SIZE.height,
+        width: MARGIN.left,
+        fill: 'aliceblue',
+        transform: `translate(-${MARGIN.left}, 0)`,
+      });
       graphFuncs.yG.attr("class", "y-axis")
                 .attr("transform", `translate(${MARGIN.left}, 0)`)
-                .call(graphFuncs.yAxis);        
+                .call(graphFuncs.yAxis);
       if(graphFuncs.xScale === null){
         graphFuncs.xScale = d3.scaleTime().domain([
           new Date(+this.dayParsed - 1000 * 60 * 60 * 3),
@@ -112,6 +118,11 @@ Vue.component('chart', {
       }
       graphFuncs.line = d3.line().x(d => graphFuncs.xScale(d.arrival_time)).y(d => graphFuncs.yScale(d.shape_dist_traveled));
       graphFuncs.xG = graphFuncs.body.append("g").attr("class", "x-axis");
+      graphFuncs.xG.append("rect").attrs({
+        height: SIZE.height - MARGIN.bottom,
+        width: SIZE.width,
+        fill: 'aliceblue',
+      }); // background to keep graph from overflowing 
       graphFuncs.xAxis = d3.axisBottom(graphFuncs.xScale);
       graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);  
     },
