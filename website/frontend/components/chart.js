@@ -24,7 +24,7 @@ const graphFuncs = {
 }
 Vue.component('chart', {
   props: ["scheduleStops", "stopOrder", "selectedDay"],
-  template: `<div id="chart"></div>`,
+  template: `<svg id="chart"></svg>`,
   data: function(){
     return {
       drag: {},
@@ -45,14 +45,17 @@ Vue.component('chart', {
   },
   methods: {
     initialize: function(){
-      const container = d3.select("div#chart");
-      graphFuncs.body = container.append("svg")
-          .attr("id", "string-chart")
-          .attr("width", SIZE.width)
-          .attr("height", SIZE.height)
-          .style("background-color", "aliceblue")
-          .style("margin", "20px").append("g");
-      graphFuncs.visual = graphFuncs.body.append("g").attr("z-index", 1);
+      graphFuncs.body = d3.select("svg#chart").attrs({
+        width: SIZE.width,
+        height: SIZE.height,
+        margin: '20px',
+      });
+      graphFuncs.body.append("rect").attrs({
+        width: SIZE.width,
+        height: SIZE.height,
+        fill: 'aliceblue'
+      });
+      graphFuncs.visual = graphFuncs.body.append("g").attr("z-index", 1).attr("fill", "blue");
       MARGIN.left = 20 + this.stopOrder.reduce((a, b) => Math.max(a, b.stop_name.length * 4.4), 0);
       graphFuncs.yScale = d3.scaleLinear().domain(d3.extent(this.stopOrder, d => +d.shape_dist_traveled)).range([SIZE.height - MARGIN.bottom, MARGIN.top]);
       graphFuncs.yAxis = d3.axisLeft(graphFuncs.yScale)
@@ -73,6 +76,7 @@ Vue.component('chart', {
       graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);
     
       function dragMove(evt){
+        evt = shiftEvt(evt, graphFuncs.body);
         let left = Math.min(evt.x, this.drag.startX);
         let right = Math.max(evt.x, this.drag.startX);
         let top = Math.min(evt.y, this.drag.startY);
@@ -89,19 +93,24 @@ Vue.component('chart', {
         });
       }
       function dragStart(evt){
+        evt = shiftEvt(evt, graphFuncs.body);
         this.drag.startX = evt.x;
         this.drag.startY = evt.y;
         this.dragRect = graphFuncs.visual.append("rect");
       }
       function dragEnd(evt){
+        debugger;
         this.drag.endX = evt.x;
         this.drag.endY = evt.y;
-        this.dragRect.remove();
+        if(this.dragRect !== null){
+          this.dragRect.remove();
+          this.dragRect = null;
+        }
       }
-      container.call(d3.drag()
+      graphFuncs.body.call(d3.drag()
       .on("drag", dragMove.bind(this))
       .on("start", dragStart.bind(this))
-      .on("end", dragEnd.bind(this)))
+      .on("end", dragEnd.bind(this)));
 
       
       graphFuncs.xHover = graphFuncs.visual.append("path").attrs({
@@ -174,3 +183,10 @@ Vue.component('chart', {
     },
   },
 });
+function shiftEvt(evt, container){
+  let boundRect = container._groups[0][0].getBoundingClientRect();
+  return {
+    x: evt.x - boundRect.x,
+    y: evt.y - boundRect.y,
+  }
+}
