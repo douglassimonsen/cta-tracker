@@ -3,10 +3,19 @@ function clamp(a, b, c){
   return Math.min(Math.max(a, b), c);
 }
 function formatDt(d){
-  if(d === undefined){
+  if(!d){
     return;
   }
   return `${d.getFullYear()}-${d.getMonth().toString().padStart(2, "0")}-${d.getDay().toString().padStart(2, "0")} ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}:${d.getSeconds().toString().padStart(2, "0")}`;
+}
+function formatDate(dt){
+  if(!dt){
+    dt = new Date();
+  }
+  let year = dt.getFullYear().toString().padStart(2, '0')
+  let month = (new Date().getMonth() % 12 + 1).toString().padStart(2, '0');
+  let day = dt.getDate().toString().padStart(2, '0')
+  return `${year}-${month}-${day}`;
 }
 function round(x, k){
   return Math.round(x * 10 ** k) / 10 ** k;

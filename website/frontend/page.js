@@ -37,11 +37,13 @@ const app = new Vue({
             trip.filter(x => x.shape_dist_traveled !== undefined),
           ]
         }));
-        toCSV(Object.entries(this.scheduleStops).map(x => x[1].map(y => {
-          y.trip = x[0]; 
-          y.arrival_time = formatDt(y.arrival_time);
-          return y;
-        })).flat());
+        if(this.formVals.event === 'data'){
+          toCSV(Object.entries(this.scheduleStops).map(x => x[1].map(y => {
+            y.trip = x[0]; 
+            y.arrival_time = formatDt(y.arrival_time);
+            return y;
+          })).flat());
+        }
       }.bind(this));
     },
     getStopOrder: function(){
@@ -65,34 +67,4 @@ const app = new Vue({
       this.hoverInfo = evt;
     }
   }
-
 });
-function ReadCompressed(url){
-  return axios.get(
-    url, 
-    {
-      headers: {'Access-Control-Allow-Origin': '*'},
-      responseType: 'arraybuffer',
-    }
-  ).then(function(url, response){
-    let inflatedResponse;
-    if(url.endsWith(".gz")){
-      inflatedResponse = pako.inflate(response.data);
-      inflatedResponse = Array.from(inflatedResponse).map((c) => String.fromCharCode(c)).join('');
-    }
-    else{
-      inflatedResponse = bzip2.simple(bzip2.array(new Uint8Array(response.data)));
-    }
-    let data = JSON.parse(inflatedResponse);
-    return data;
-  }.bind(null, url));
-}
-function formatDate(dt){
-  if(!dt){
-    dt = new Date();
-  }
-  let year = dt.getFullYear().toString().padStart(2, '0')
-  let month = (new Date().getMonth() % 12 + 1).toString().padStart(2, '0');
-  let day = dt.getDate().toString().padStart(2, '0')
-  return `${year}-${month}-${day}`;
-}
