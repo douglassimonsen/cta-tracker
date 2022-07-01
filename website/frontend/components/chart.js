@@ -46,6 +46,7 @@ Vue.component('chart', {
   },
   mounted: function(){
     this.initialize();
+    this.generateGraphObjs();
     this.addTrips(this.scheduleList, "blue");
   },
   computed: {
@@ -68,13 +69,31 @@ Vue.component('chart', {
         height: SIZE.height,
         fill: 'aliceblue'
       });
+      graphFuncs.body.call(d3.drag()
+      .on("drag", dragMove.bind(this))
+      .on("start", dragStart.bind(this))
+      .on("end", dragEnd.bind(this)));
       graphFuncs.visual = graphFuncs.body.append("g").attr("z-index", 1).attr("fill", "blue");
+      graphFuncs.xHover = graphFuncs.visual.append("path").attrs({
+        'class': 'x-hover line',
+        'stroke': 'black',
+        'stroke-width': 1,
+        "stroke-dasharray": "10,10",
+      });      
+      graphFuncs.yHover = graphFuncs.visual.append("path").attrs({
+        'class': 'y-hover line',
+        'stroke': 'black',
+        'stroke-width': 1,
+        "stroke-dasharray": "10,10",
+      });   
+    },
+    generateGraphObjs: function(){
       MARGIN.left = 20 + this.stopOrder.reduce((a, b) => Math.max(a, b.stop_name.length * 4.4), 0);
       if(graphFuncs.yScale === null){
         graphFuncs.yScale = d3.scaleLinear().domain(d3.extent(this.stopOrder, d => +d.shape_dist_traveled)).range([SIZE.height - MARGIN.bottom, MARGIN.top]);
         graphFuncs.yAxis = d3.axisLeft(graphFuncs.yScale)
                              .tickValues(this.stopOrder.map(x => x.shape_dist_traveled))
-                             .tickFormat((d, i) => this.stopOrder[i].stop_name);
+                             .tickFormat((_, i) => this.stopOrder[i].stop_name);
         graphFuncs.yG = graphFuncs.body.append("g");
         graphFuncs.yG.attr("class", "y-axis")
                   .attr("transform", `translate(${MARGIN.left}, 0)`)
@@ -89,55 +108,7 @@ Vue.component('chart', {
         graphFuncs.xG = graphFuncs.body.append("g")
         graphFuncs.xAxis = d3.axisBottom(graphFuncs.xScale);
         graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);  
-      }
-      function dragMove(evt){
-        evt = shiftEvt(evt);
-        let bounds = boundingBox(evt, this.drag);
-        this.dragRect.attrs({
-          stroke: '#000000',
-          'stroke-width': '1.5px',
-          fill: '#ffffff',
-          'fill-opacity': 0.5,
-          x: bounds.left,
-          y: bounds.top,
-          width: (bounds.right - bounds.left),
-          height: (bounds.bottom - bounds.top),
-        });
-      }
-      function dragStart(evt){
-        this.drag.startX = evt.sourceEvent.offsetX;
-        this.drag.startY = evt.sourceEvent.offsetY;
-        this.dragRect = graphFuncs.visual.append("rect");
-      }
-      function dragEnd(evt){
-        evt = shiftEvt(evt);
-        let bounds = boundingBox(evt, this.drag);
-        bounds = {
-          left: graphFuncs.xScale.invert(bounds.left),
-          right: graphFuncs.xScale.invert(bounds.right),
-          top: graphFuncs.yScale.invert(bounds.top),
-          bottom: graphFuncs.yScale.invert(bounds.bottom),
-        }
-        this.zoom(bounds);
-      }
-      graphFuncs.body.call(d3.drag()
-      .on("drag", dragMove.bind(this))
-      .on("start", dragStart.bind(this))
-      .on("end", dragEnd.bind(this)));
-
-      
-      graphFuncs.xHover = graphFuncs.visual.append("path").attrs({
-        'class': 'x-hover line',
-        'stroke': 'black',
-        'stroke-width': 1,
-        "stroke-dasharray": "10,10",
-      });      
-      graphFuncs.yHover = graphFuncs.visual.append("path").attrs({
-        'class': 'y-hover line',
-        'stroke': 'black',
-        'stroke-width': 1,
-        "stroke-dasharray": "10,10",
-      });      
+      }   
     },
     buttonZoom(times){
       this.zoom({
@@ -152,8 +123,7 @@ Vue.component('chart', {
       if(bounds.bottom !== undefined && bounds.top !== undefined){
         graphFuncs.yScale.domain([bounds.bottom, bounds.top]);  // Although the range is flipped, the domain is still normal
       }
-      graphFuncs.body.selectChildren().remove();
-      this.initialize();
+      this.generateGraphObjs();
       this.addTrips(this.scheduleList, "blue");
     },
     addTrips: function(trips, color){
@@ -230,4 +200,34 @@ function boundingBox(evt, drag){
     top: top,
     bottom: bottom,
   }
+}
+function dragMove(evt){
+  evt = shiftEvt(evt);
+  let bounds = boundingBox(evt, this.drag);
+  this.dragRect.attrs({
+    stroke: '#000000',
+    'stroke-width': '1.5px',
+    fill: '#ffffff',
+    'fill-opacity': 0.5,
+    x: bounds.left,
+    y: bounds.top,
+    width: (bounds.right - bounds.left),
+    height: (bounds.bottom - bounds.top),
+  });
+}
+function dragStart(evt){
+  this.drag.startX = evt.sourceEvent.offsetX;
+  this.drag.startY = evt.sourceEvent.offsetY;
+  this.dragRect = graphFuncs.visual.append("rect");
+}
+function dragEnd(evt){
+  evt = shiftEvt(evt);
+  let bounds = boundingBox(evt, this.drag);
+  bounds = {
+    left: graphFuncs.xScale.invert(bounds.left),
+    right: graphFuncs.xScale.invert(bounds.right),
+    top: graphFuncs.yScale.invert(bounds.top),
+    bottom: graphFuncs.yScale.invert(bounds.bottom),
+  }
+  this.zoom(bounds);
 }
