@@ -139,7 +139,9 @@ Vue.component('chart', {
       if(bounds.bottom !== undefined && bounds.top !== undefined){
         graphFuncs.yScale.domain([bounds.bottom, bounds.top]);  // Although the range is flipped, the domain is still normal
       }
-      this.dragRect.remove();
+      if(this.dragRect){
+        this.dragRect.remove();
+      }
       graphFuncs.body.selectAll(".line").remove();
       graphFuncs.body.selectAll(".stop-group").remove();
       this.generateGraphObjs();
