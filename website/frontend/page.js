@@ -37,6 +37,11 @@ const app = new Vue({
             trip.filter(x => x.shape_dist_traveled !== undefined),
           ]
         }));
+        toCSV(Object.entries(this.scheduleStops).map(x => x[1].map(y => {
+          y.trip = x[0]; 
+          y.arrival_time = formatDt(y.arrival_time);
+          return y;
+        })).flat());
       }.bind(this));
     },
     getStopOrder: function(){
