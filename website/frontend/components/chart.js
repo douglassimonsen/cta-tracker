@@ -57,39 +57,38 @@ Vue.component('chart', {
       });
       graphFuncs.visual = graphFuncs.body.append("g").attr("z-index", 1).attr("fill", "blue");
       MARGIN.left = 20 + this.stopOrder.reduce((a, b) => Math.max(a, b.stop_name.length * 4.4), 0);
-      graphFuncs.yScale = d3.scaleLinear().domain(d3.extent(this.stopOrder, d => +d.shape_dist_traveled)).range([SIZE.height - MARGIN.bottom, MARGIN.top]);
-      graphFuncs.yAxis = d3.axisLeft(graphFuncs.yScale)
-                           .tickValues(this.stopOrder.map(x => x.shape_dist_traveled))
-                           .tickFormat((d, i) => this.stopOrder[i].stop_name);
-      graphFuncs.yG = graphFuncs.body.append("g");
-      graphFuncs.yG.attr("class", "y-axis")
-                .attr("transform", `translate(${MARGIN.left}, 0)`)
-                .call(graphFuncs.yAxis);
-    
-      graphFuncs.xScale = d3.scaleTime().domain([
-        new Date(+this.dayParsed - 1000 * 60 * 60 * 3),
-        new Date(+this.dayParsed + 1000 * 60 * 60 * 27), // +- 3 hours around the date
-      ]).range([MARGIN.left, SIZE.width - MARGIN.right]);
-      graphFuncs.line = d3.line().x(d => graphFuncs.xScale(d.arrival_time)).y(d => graphFuncs.yScale(d.shape_dist_traveled));
-      graphFuncs.xG = graphFuncs.body.append("g")
-      graphFuncs.xAxis = d3.axisBottom(graphFuncs.xScale);
-      graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);
-    
+      if(graphFuncs.yScale === null){
+        graphFuncs.yScale = d3.scaleLinear().domain(d3.extent(this.stopOrder, d => +d.shape_dist_traveled)).range([SIZE.height - MARGIN.bottom, MARGIN.top]);
+        graphFuncs.yAxis = d3.axisLeft(graphFuncs.yScale)
+                             .tickValues(this.stopOrder.map(x => x.shape_dist_traveled))
+                             .tickFormat((d, i) => this.stopOrder[i].stop_name);
+        graphFuncs.yG = graphFuncs.body.append("g");
+        graphFuncs.yG.attr("class", "y-axis")
+                  .attr("transform", `translate(${MARGIN.left}, 0)`)
+                  .call(graphFuncs.yAxis);        
+      }
+      if(graphFuncs.xScale === null){
+        graphFuncs.xScale = d3.scaleTime().domain([
+          new Date(+this.dayParsed - 1000 * 60 * 60 * 3),
+          new Date(+this.dayParsed + 1000 * 60 * 60 * 27), // +- 3 hours around the date
+        ]).range([MARGIN.left, SIZE.width - MARGIN.right]);
+        graphFuncs.line = d3.line().x(d => graphFuncs.xScale(d.arrival_time)).y(d => graphFuncs.yScale(d.shape_dist_traveled));
+        graphFuncs.xG = graphFuncs.body.append("g")
+        graphFuncs.xAxis = d3.axisBottom(graphFuncs.xScale);
+        graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);  
+      }
       function dragMove(evt){
         evt = shiftEvt(evt, graphFuncs.body);
-        let left = Math.min(evt.x, this.drag.startX);
-        let right = Math.max(evt.x, this.drag.startX);
-        let top = Math.min(evt.y, this.drag.startY);
-        let bottom = Math.max(evt.y, this.drag.startY);
+        let bounds = boundingBox(evt, this.drag);
         this.dragRect.attrs({
           stroke: '#000000',
           'stroke-width': '1.5px',
           fill: '#ffffff',
           'fill-opacity': 0.5,
-          x: left,
-          y: top,
-          width: (right - left),
-          height: (bottom - top),
+          x: bounds.left,
+          y: bounds.top,
+          width: (bounds.right - bounds.left),
+          height: (bounds.bottom - bounds.top),
         });
       }
       function dragStart(evt){
@@ -99,13 +98,19 @@ Vue.component('chart', {
         this.dragRect = graphFuncs.visual.append("rect");
       }
       function dragEnd(evt){
-        debugger;
-        this.drag.endX = evt.x;
-        this.drag.endY = evt.y;
-        if(this.dragRect !== null){
-          this.dragRect.remove();
-          this.dragRect = null;
-        }
+        evt = shiftEvt(evt, graphFuncs.body);
+        let bounds = boundingBox(evt, this.drag);
+        graphFuncs.xScale.domain([
+          graphFuncs.xScale.invert(bounds.left),
+          graphFuncs.xScale.invert(bounds.right),
+        ]);
+        graphFuncs.yScale.domain([  // Although the range is flipped, the domain is still normal
+          graphFuncs.yScale.invert(bounds.bottom),
+          graphFuncs.yScale.invert(bounds.top),
+        ]);
+        graphFuncs.body.selectChildren().remove();
+        this.initialize();
+        this.addTrips(this.scheduleList, "blue");
       }
       graphFuncs.body.call(d3.drag()
       .on("drag", dragMove.bind(this))
@@ -188,5 +193,17 @@ function shiftEvt(evt, container){
   return {
     x: evt.x - boundRect.x,
     y: evt.y - boundRect.y,
+  }
+}
+function boundingBox(evt, drag){
+  let left = Math.min(evt.x, drag.startX);
+  let right = Math.max(evt.x, drag.startX);
+  let top = Math.min(evt.y, drag.startY);
+  let bottom = Math.max(evt.y, drag.startY);
+  return {
+    left: left,
+    right: right,
+    top: top,
+    bottom: bottom,
   }
 }
