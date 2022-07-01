@@ -26,10 +26,10 @@ Vue.component('info-box', {
       return formatDt(this.info.stopTime) || 'Idk';
     },
     diffFromSchedule: function(){
-      return round(this.info.diffFromSchedule, 3) || 'Idk';
+      return round(this.info.diffFromSchedule, 2) || 'Idk';
     },
     headway: function(){
-      return round(this.info.headway, 3) || 'Idk';
+      return round(this.info.headway, 2) || 'Idk';
     },
     tripType: function(){
       return this.info.tripType || 'Idk';

@@ -2,10 +2,10 @@ Vue.component('input-form', {
   template: `
   <div style="width:360px">
     <b-form-select v-model="selectedMode" :options="modes" class="mb-2"></b-form-select>
-    <b-form-select v-model="selectedRoute" :options="availableRoutes" class="mb-2" :disabled="selectedMode === ''"></b-form-select>
-    <b-form-select v-model="selectedDirection" :options="availableDirections" class="mb-2" :disabled="selectedRoute === ''"></b-form-select>
+    <b-form-select v-model="selectedRoute" :options="availableRoutes" class="mb-2" :disabled="!selectedMode"></b-form-select>
+    <b-form-select v-model="selectedDirection" :options="availableDirections" class="mb-2" :disabled="!selectedRoute"></b-form-select>
     <b-form-datepicker v-model="selectedDay" class="mb-2"></b-form-datepicker>
-    <b-button @click="sendEvent('data')">Download Day's Data (Raw)</b-button>  
+    <b-button @click="sendEvent('data')">Download Day's Data (CSV)</b-button>  
     <b-button @click="sendEvent('chart')">Show Route Info</b-button>  
   </div> 
   `,
@@ -26,7 +26,7 @@ Vue.component('input-form', {
     availableRoutes: function(){
       let routes = this.rawData.filter(x => x.mode == this.selectedMode).map(x => x.route_id);
       routes = [...new Set(routes)].sort(function(a, b){
-        return a.padStart(b.length, ' ') > b.padStart(a.length, ' ') ? 1 : -1;
+        return a.padStart(b.length, ' ') > b.padStart(a.length, ' ') ? 1 : -1;  // the x.padStart(y.length) makes 2 and 11 -> ' 2' and '11', making 2 properly less, rather than greater than in the normal string sort
       });
       return routes;
     },
