@@ -24,7 +24,20 @@ const graphFuncs = {
 }
 Vue.component('chart', {
   props: ["scheduleStops", "stopOrder", "selectedDay"],
-  template: `<svg id="chart"></svg>`,
+  template: `
+    <div>
+      <div v-if="scheduleStops">
+        <b-button @click="buttonZoom(['00:00:00', '06:00:00'])">Late Night</b-button>
+        <b-button @click="buttonZoom(['06:00:00', '09:00:00'])">Morning Rush</b-button>
+        <b-button @click="buttonZoom(['09:00:00', '14:00:00'])">Mid Day</b-button>
+        <b-button @click="buttonZoom(['14:00:00', '19:00:00'])">Evening Rush</b-button>
+        <b-button @click="buttonZoom(['19:00:00', '23:59:59'])">Early Night</b-button>
+        <b-button @click="buttonZoom(['00:00:00', '23:59:59'])">All Day</b-button>
+
+      </div>
+      <svg id="chart"></svg>
+    </div>
+  `,
   data: function(){
     return {
       drag: {},
@@ -78,7 +91,7 @@ Vue.component('chart', {
         graphFuncs.xG.attr("transform", `translate(0, ${SIZE.height - MARGIN.bottom})`).call(graphFuncs.xAxis);  
       }
       function dragMove(evt){
-        evt = shiftEvt(evt, graphFuncs.body);
+        evt = shiftEvt(evt);
         let bounds = boundingBox(evt, this.drag);
         this.dragRect.attrs({
           stroke: '#000000',
@@ -92,25 +105,20 @@ Vue.component('chart', {
         });
       }
       function dragStart(evt){
-        evt = shiftEvt(evt, graphFuncs.body);
-        this.drag.startX = evt.x;
-        this.drag.startY = evt.y;
+        this.drag.startX = evt.sourceEvent.offsetX;
+        this.drag.startY = evt.sourceEvent.offsetY;
         this.dragRect = graphFuncs.visual.append("rect");
       }
       function dragEnd(evt){
-        evt = shiftEvt(evt, graphFuncs.body);
+        evt = shiftEvt(evt);
         let bounds = boundingBox(evt, this.drag);
-        graphFuncs.xScale.domain([
-          graphFuncs.xScale.invert(bounds.left),
-          graphFuncs.xScale.invert(bounds.right),
-        ]);
-        graphFuncs.yScale.domain([  // Although the range is flipped, the domain is still normal
-          graphFuncs.yScale.invert(bounds.bottom),
-          graphFuncs.yScale.invert(bounds.top),
-        ]);
-        graphFuncs.body.selectChildren().remove();
-        this.initialize();
-        this.addTrips(this.scheduleList, "blue");
+        bounds = {
+          left: graphFuncs.xScale.invert(bounds.left),
+          right: graphFuncs.xScale.invert(bounds.right),
+          top: graphFuncs.yScale.invert(bounds.top),
+          bottom: graphFuncs.yScale.invert(bounds.bottom),
+        }
+        this.zoom(bounds);
       }
       graphFuncs.body.call(d3.drag()
       .on("drag", dragMove.bind(this))
@@ -130,6 +138,23 @@ Vue.component('chart', {
         'stroke-width': 1,
         "stroke-dasharray": "10,10",
       });      
+    },
+    buttonZoom(times){
+      this.zoom({
+        left: new Date(`${this.selectedDay}T${times[0]}`),
+        right: new Date(`${this.selectedDay}T${times[1]}`),
+      });
+    },
+    zoom: function(bounds){
+      if(bounds.left !== undefined && bounds.right !== undefined){
+        graphFuncs.xScale.domain([bounds.left, bounds.right]);
+      }
+      if(bounds.bottom !== undefined && bounds.top !== undefined){
+        graphFuncs.yScale.domain([bounds.bottom, bounds.top]);  // Although the range is flipped, the domain is still normal
+      }
+      graphFuncs.body.selectChildren().remove();
+      this.initialize();
+      this.addTrips(this.scheduleList, "blue");
     },
     addTrips: function(trips, color){
       graphFuncs.visual.selectAll(".line").append("g")
@@ -188,11 +213,10 @@ Vue.component('chart', {
     },
   },
 });
-function shiftEvt(evt, container){
-  let boundRect = container._groups[0][0].getBoundingClientRect();
+function shiftEvt(evt){
   return {
-    x: evt.x - boundRect.x,
-    y: evt.y - boundRect.y,
+    x: evt.sourceEvent.offsetX,
+    y: evt.sourceEvent.offsetY,
   }
 }
 function boundingBox(evt, drag){
