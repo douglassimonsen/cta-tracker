@@ -88,6 +88,12 @@ create table cta_tracker.trips (
   wheelchair_accessible int,
   schd_trip_id text
 );
+create table cta_tracker.stops_actual (
+  stop_id int,
+  scheduled_stop_id int,
+  stop_name text,
+  route text
+);
 create materialized view cta_tracker.scheduled_stops as (
 	with base as (
 		select t.route_id, 

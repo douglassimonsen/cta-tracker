@@ -4,5 +4,6 @@ deploy.zip
 dependency_layer/mypackage.zip
 *.pyc
 *.json
+*.bz2
 sched.zip
 test.py
