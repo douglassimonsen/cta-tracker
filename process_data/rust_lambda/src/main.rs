@@ -1,5 +1,4 @@
 use serde::{Serialize, Deserialize};
-use serde_json::{Result, Value};
 use std::{fs, collections::HashMap};
 
 
@@ -15,18 +14,20 @@ struct Route {
   stops: HashMap<String, Vec<Stop>>
 }
 
-fn untyped_example() -> Result<()> {
+fn get_stop_list() -> HashMap<String, Route> {
     // Some JSON input data as a &str. Maybe this comes from the user.
-    let data = fs::read_to_string("C:/Users/mwham/Documents/repos/cta-tracker/process_data/fill_picklists/bus-stops.json").expect("Something went wrong reading the file");
+    let data = fs::read_to_string("C:/Users/mwham/Documents/repos/cta-tracker/process_data/fill_picklists/bus-stops.json").unwrap();
+    return serde_json::from_str(&data).unwrap();
+}
 
-    let v: HashMap<String, Route> = serde_json::from_str(&data)?;
-    println!("{:#?}", v["1"]);
-    println!("Please call");
+fn get_stops(v: HashMap<String, Route>){
+  for (key, val) in v.into_iter() {
+    for (name, stops) in val.stops.into_iter() {
 
-    Ok(())
+    }
+  }
 }
 
 fn main() {
-  untyped_example().unwrap();
-  println!("Please call2");
+  get_stop_list();
 }
