@@ -6,4 +6,5 @@ dependency_layer/mypackage.zip
 *.json
 *.bz2
 sched.zip
-test.py
+test*
+target
