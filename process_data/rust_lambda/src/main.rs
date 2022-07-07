@@ -2,6 +2,7 @@ use serde::{Serialize, Deserialize};
 use std::{fs, collections::HashMap};
 use std::time::Duration;
 use soup::prelude::*;
+use chrono::{DateTime, Utc};
 
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -36,7 +37,12 @@ fn get_arrivals(stop_id: &str){
   ).send().unwrap().text().unwrap();
   let soup = Soup::new(&response);
   for stop in soup.tag("stop").find_all().into_iter() {
-    println!("{}", stop.text());
+    let mut row: HashMap<String, String> = stop.tag("pre").find().unwrap().children().skip(1).filter(|x| x.name() != "[text]").map(|x| {
+      return (x.name().to_string(), x.text());
+    }).collect();
+    let now = Utc::now();
+    row.insert("response_at".to_string(), now.to_rfc3339());
+    row.insert("stop_id".to_string(), stop_id.to_string());
   }
 }
 
