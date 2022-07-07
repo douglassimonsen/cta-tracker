@@ -6,6 +6,8 @@ use rayon::prelude::*;
 use s3::bucket::Bucket;
 use s3::creds::Credentials;
 use tokio;
+use bzip2;
+
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Stop {
@@ -65,6 +67,10 @@ fn get_stops(v: Vec<Stop>) -> Vec<HashMap<String, String>>{
 
 async fn save_data(stops: Vec<HashMap<String, String>>){
   let dump_str = serde_json::to_string(&stops).unwrap();
+  let dump_bytes = dump_str.as_bytes();
+  let mut out_bytes: Vec<u8> = vec![dump_bytes.len() as u8];
+  let mut dump_compressor = bzip2::Compress::new(bzip2::Compression::best(), 0);
+  dump_compressor.compress_vec(dump_bytes, &mut out_bytes, bzip2::Action::Finish).unwrap();
 
   let bucket = Bucket::new(
     "cta-bus-and-train-tracker", 
@@ -77,7 +83,7 @@ async fn save_data(stops: Vec<HashMap<String, String>>){
   ) as i64)).format("%Y-%m-%d/%H-%M-%S");
   bucket.put_object(
     format!("bustracker-test/{chunk_timestamp}.bz2", chunk_timestamp=chunk_timestamp_str), 
-    dump_str.as_bytes(),
+    out_bytes.as_slice(),
   ).await.unwrap();
 }
 
