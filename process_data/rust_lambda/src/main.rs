@@ -2,7 +2,8 @@ use serde::{Serialize, Deserialize};
 use std::{fs, collections::HashMap};
 use std::time::Duration;
 use soup::prelude::*;
-use chrono::{Utc};
+use chrono::Utc;
+use rayon::prelude::*;
 
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -50,15 +51,21 @@ fn get_arrivals(stop_id: &str) -> Vec<HashMap<String, String>>{
   }).collect();
 }
 
-fn get_stops(v: Vec<Stop>){
-  let mut ret: Vec<HashMap<String, String>> = Vec::new();
-  for stop in v.into_iter(){
+fn get_stops(v: Vec<Stop>) -> Vec<HashMap<String, String>>{
+  return v.par_iter().flat_map(|stop|{
     println!("{:?}", stop);
-    ret.extend(get_arrivals(&stop.id));
-  }
+    return get_arrivals(&stop.id);
+  }).collect();
+}
+
+
+fn save_data(stops: Vec<HashMap<String, String>>){
+  let dump_str = serde_json::to_string(&stops).unwrap();
+  fs::write("test.json", dump_str).unwrap();
 }
 
 fn main() {
   let stop_list = get_stop_list();
-  get_stops(stop_list);
+  let stops = get_stops(stop_list);
+  save_data(stops);
 }
