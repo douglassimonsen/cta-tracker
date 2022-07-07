@@ -1,5 +1,7 @@
 use serde::{Serialize, Deserialize};
 use std::{fs, collections::HashMap};
+use std::time::Duration;
+use soup::prelude::*;
 
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -27,7 +29,18 @@ fn get_stops(v: HashMap<String, Route>){
     }
   }
 }
+fn get_arrivals(stop_id: &str){
+  let client = reqwest::blocking::Client::builder().timeout(Duration::from_secs(10)).build().unwrap();
+  let response = client.get(
+    format!("http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop={stop_id}", stop_id=stop_id)
+  ).send().unwrap().text().unwrap();
+  let soup = Soup::new(&response);
+  for stop in soup.tag("stop").find_all().into_iter() {
+    println!("{}", stop.text());
+  }
+}
 
 fn main() {
   get_stop_list();
+  get_arrivals("5981");
 }
