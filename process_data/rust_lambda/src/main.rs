@@ -1,10 +1,11 @@
 use serde::{Serialize, Deserialize};
 use std::{fs, collections::HashMap};
-use std::time::Duration;
 use soup::prelude::*;
-use chrono::Utc;
+use chrono::{Utc, Timelike, Duration};
 use rayon::prelude::*;
-
+use s3::bucket::Bucket;
+use s3::creds::Credentials;
+use tokio;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Stop {
@@ -28,11 +29,11 @@ fn get_stop_list() -> Vec<Stop> {
   return ret.into_iter().map(|x| Stop{
     id: x.id.to_string(), 
     name: x.name.to_string()
-  }).collect();
+  }).take(20).collect();
 }
 
 fn get_arrivals(stop_id: &str) -> Vec<HashMap<String, String>>{
-  let client = reqwest::blocking::Client::builder().timeout(Duration::from_secs(10)).build().unwrap();
+  let client = reqwest::blocking::Client::builder().timeout(Duration::seconds(10).to_std().unwrap()).build().unwrap();
   let response = match client.get(
     format!("http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop={stop_id}", stop_id=stop_id)
   ).send() {
@@ -41,7 +42,10 @@ fn get_arrivals(stop_id: &str) -> Vec<HashMap<String, String>>{
   };
   let soup = Soup::new(&response);
   return soup.tag("stop").find_all().filter(|stop| !(stop.text().contains("No arrival times") || stop.text().contains("No service scheduled"))).map(|stop | {
-    let parent = stop.tag("pre").find().unwrap();
+    let parent = match stop.tag("pre").find() {
+      Some(t) => t,
+      None => return HashMap::new(),  // there's nothing of value here
+    };
     let mut row: HashMap<String, String> = parent.children().skip(1).filter(|x| x.name() != "[text]").map(|x| {
       return (x.name().to_string(), x.text());
     }).collect();
@@ -59,13 +63,27 @@ fn get_stops(v: Vec<Stop>) -> Vec<HashMap<String, String>>{
 }
 
 
-fn save_data(stops: Vec<HashMap<String, String>>){
+async fn save_data(stops: Vec<HashMap<String, String>>){
   let dump_str = serde_json::to_string(&stops).unwrap();
-  fs::write("test.json", dump_str).unwrap();
+
+  let bucket = Bucket::new(
+    "cta-bus-and-train-tracker", 
+    "us-east-1".parse().unwrap(), 
+    Credentials::default().unwrap()
+  ).unwrap();
+  let chunk_timestamp = Utc::now();
+  let chunk_timestamp_str = (chunk_timestamp - Duration::seconds((
+    (chunk_timestamp.minute() % 5) * 60 + chunk_timestamp.second()
+  ) as i64)).format("%Y-%m-%d/%H-%M-%S");
+  bucket.put_object(
+    format!("bustracker-test/{chunk_timestamp}.bz2", chunk_timestamp=chunk_timestamp_str), 
+    dump_str.as_bytes(),
+  ).await.unwrap();
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
   let stop_list = get_stop_list();
   let stops = get_stops(stop_list);
-  save_data(stops);
+  save_data(stops).await;
 }
