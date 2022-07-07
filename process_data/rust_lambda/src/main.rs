@@ -32,12 +32,15 @@ fn get_stop_list() -> Vec<Stop> {
 
 fn get_arrivals(stop_id: &str) -> Vec<HashMap<String, String>>{
   let client = reqwest::blocking::Client::builder().timeout(Duration::from_secs(10)).build().unwrap();
-  let response = client.get(
+  let response = match client.get(
     format!("http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop={stop_id}", stop_id=stop_id)
-  ).send().unwrap().text().unwrap();
+  ).send() {
+    Err(_t) => "".to_string(),
+    Ok(t) => t.text().unwrap(),
+  };
   let soup = Soup::new(&response);
   return soup.tag("stop").find_all().filter(|stop| !(stop.text().contains("No arrival times") || stop.text().contains("No service scheduled"))).map(|stop | {
-    let parent =  stop.tag("pre").find().unwrap();
+    let parent = stop.tag("pre").find().unwrap();
     let mut row: HashMap<String, String> = parent.children().skip(1).filter(|x| x.name() != "[text]").map(|x| {
       return (x.name().to_string(), x.text());
     }).collect();
