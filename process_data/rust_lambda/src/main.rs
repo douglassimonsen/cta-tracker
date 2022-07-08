@@ -6,9 +6,7 @@ use rayon::prelude::*;
 use s3::bucket::Bucket;
 use s3::creds::Credentials;
 use tokio;
-use std::io::prelude::*;
-use bzip2::Compression;
-use bzip2::read::{BzEncoder, BzDecoder};
+use bzip2::{Compress, Compression, Action};
 
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -70,9 +68,11 @@ fn get_stops(v: Vec<Stop>) -> Vec<HashMap<String, String>>{
 async fn save_data(stops: Vec<HashMap<String, String>>){
   let dump_str = serde_json::to_string(&stops).unwrap();
   let dump_bytes = dump_str.as_bytes();
-  let mut compressor = BzEncoder::new(dump_bytes, Compression::best());
-  let mut contents = vec![0; dump_bytes.len()];
-  compressor.read_to_end(&mut contents).unwrap();
+
+  let mut compressed: Vec<u8> = Vec::new();
+  compressed.reserve(dump_bytes.len());
+  let mut compressor = Compress::new(Compression::best(), 0);
+  compressor.compress_vec(dump_bytes, &mut compressed, Action::Finish).unwrap();
 
   let bucket = Bucket::new(
     "cta-bus-and-train-tracker", 
@@ -85,7 +85,7 @@ async fn save_data(stops: Vec<HashMap<String, String>>){
   ) as i64)).format("%Y-%m-%d/%H-%M-%S");
   bucket.put_object(
     format!("bustracker-test/{chunk_timestamp}.bz2", chunk_timestamp=chunk_timestamp_str), 
-    contents.as_slice(),
+    &compressed.as_slice(),
   ).await.unwrap();
 }
 
